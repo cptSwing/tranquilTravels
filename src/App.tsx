@@ -1,30 +1,33 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
-
 function App() {
-    const [count, setCount] = useState(0);
-
     return (
-        <>
-            <div>
-                <a href='https://vite.dev' target='_blank'>
-                    <img src={viteLogo} className='logo' alt='Vite logo' />
-                </a>
-                <a href='https://react.dev' target='_blank'>
-                    <img src={reactLogo} className='logo react' alt='React logo' />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className='card bg-red-700 text-amber-50 hover:text-black'>
-                <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
-        </>
+        <div className='h-screen w-screen [--header-height:theme(spacing.24)]'>
+            <header className='fixed top-0 flex h-[var(--header-height)] w-full flex-col items-center justify-between bg-red-700 pt-8 pb-2'>
+                <div>Tranquil Travels</div>
+                <div className='flex items-start justify-start gap-x-2'>
+                    <div>Item 1</div>
+                    <div>Item 2</div>
+                    <div>Item 3</div>
+                </div>
+            </header>
+
+            <main className='fixed top-[var(--header-height)] right-0 left-0 flex flex-col gap-y-2 bg-green-600 p-2'>
+                <div className='flex justify-around gap-x-2'>
+                    <div className='bg-gray-500 p-2'>
+                        <h4>Pick Travel Dates</h4>
+                        <div className='h-24 py-8'>(calendar)</div>
+                    </div>
+
+                    <div className='bg-gray-500 p-2'>
+                        <h4>Pick Countries to Query</h4>
+                        <div className='h-24 py-8'>(list)</div>
+                    </div>
+                </div>
+
+                <div className='bg-gray-500 p-2'>
+                    <h5>Results</h5>
+                </div>
+            </main>
+        </div>
     );
 }
 
