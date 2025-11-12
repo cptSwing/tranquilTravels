@@ -1,33 +1,50 @@
-import js from '@eslint/js';
+import jsEslint from '@eslint/js';
 import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import reactEslint from 'eslint-plugin-react';
+import reactHooksEslint from 'eslint-plugin-react-hooks';
+import reactRefreshEslint from 'eslint-plugin-react-refresh';
+import tsEslint from 'typescript-eslint';
+import prettierEslintRecommended from 'eslint-plugin-prettier/recommended';
+import jsxA11yEslint from 'eslint-plugin-jsx-a11y';
 
-export default tseslint.config(
+export default tsEslint.config(
     { ignores: ['dist'] },
     {
-        extends: [js.configs.recommended, ...tseslint.configs.recommended, eslintPluginPrettierRecommended],
-        files: ['**/*.{ts,tsx}'],
+        extends: [
+            jsEslint.configs.recommended,
+            reactEslint.configs.flat.recommended,
+            reactEslint.configs.flat['jsx-runtime'],
+            reactRefreshEslint.configs.recommended,
+            reactHooksEslint.configs['recommended-latest'],
+            jsxA11yEslint.flatConfigs.recommended,
+            ...tsEslint.configs.recommended,
+            prettierEslintRecommended,
+        ],
+        files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
         languageOptions: {
-            ecmaVersion: 2020,
+            ecmaVersion: 2021,
+            parserOptions: {
+                ecmaFeatures: {
+                    jsx: true,
+                },
+            },
             globals: globals.browser,
         },
-        plugins: {
-            'react-hooks': reactHooks,
-            'react-refresh': reactRefresh,
+        settings: {
+            react: {
+                version: 'detect',
+            },
         },
         rules: {
-            ...reactHooks.configs.recommended.rules,
-            'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+            'react-hooks/rules-of-hooks': 'warn',
+            'react-hooks/exhaustive-deps': 'warn',
 
             'object-shorthand': 'warn',
             'no-console': 'warn',
             'no-unused-vars': 'off',
             'no-unused-expressions': 'off',
+            'no-unreachable': 'warn',
 
-            'prettier/prettier': 'error',
             '@typescript-eslint/no-unused-vars': [
                 'warn',
                 {
@@ -40,9 +57,12 @@ export default tseslint.config(
                     destructuredArrayIgnorePattern: '^_',
                 },
             ],
+            '@typescript-eslint/no-unused-expressions': ['error', { allowTernary: true, allowShortCircuit: true }],
 
-            'react-hooks/rules-of-hooks': 'warn',
-            'react-hooks/exhaustive-deps': 'warn',
+            'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+
+            'react/prop-types': 'off', // currently bugs out when using React.FC, see https://github.com/jsx-eslint/eslint-plugin-react/issues/3873
+            'react/display-name': ['off'], // In most cases you don't need to set the displayName as it's inferred from the function/class name.
         },
     },
 );
