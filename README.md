@@ -1,1 +1,13 @@
-[x] Next, generate TypeScript types from your OpenAPI schema using openapi-typescript: `npx openapi-typescript ./path/to/api/v1.yaml -o ./src/lib/api/v1.d.ts`
+# Tranquil Travels
+
+#### Roam the planet in (relative) peace
+
+<br/>
+<br/>
+<br/>
+
+#### Dev links
+
+- [Open Holidays Api](https://www.openholidaysapi.org/)
+- [Tanstack/React-Query](https://tanstack.com/query/latest)
+- [OpenApi-React-Query](https://openapi-ts.dev/openapi-react-query/)
