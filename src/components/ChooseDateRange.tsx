@@ -1,9 +1,12 @@
+import { getDateString, splitDateString } from '../lib/handleDates';
 import { useZustandStore } from '../lib/zustandStore';
 
 const store_setDateRange = useZustandStore.getState().methods.store_setDateRange;
 
 const ChooseDateRange = () => {
     const { from, to } = useZustandStore((store) => store.values.dateRange);
+    const rangeFrom = getDateString(from);
+    const rangeTo = getDateString(to);
 
     return (
         <div className="rounded-xs bg-neutral-500 p-2 shadow-lg">
@@ -16,9 +19,9 @@ const ChooseDateRange = () => {
                         <input
                             className="bg-yellow-200 invalid:bg-red-800"
                             type="date"
-                            value={from}
-                            max={to} // TODO to minus one day, and max 11 months in total
-                            onChange={(ev) => store_setDateRange({ from: ev.target.value })}
+                            value={rangeFrom}
+                            max={rangeTo} // TODO to minus one day, and max 11 months in total
+                            onChange={(ev) => store_setDateRange({ from: splitDateString(ev.target.value) })}
                         />
                     </label>
                     <label>
@@ -26,9 +29,9 @@ const ChooseDateRange = () => {
                         <input
                             className="bg-yellow-200 invalid:bg-red-800"
                             type="date"
-                            value={to}
-                            min={from} // TODO from plus one day, and max 11 months in total
-                            onChange={(ev) => store_setDateRange({ to: ev.target.value })}
+                            value={rangeTo}
+                            min={rangeFrom} // TODO from plus one day, and max 11 months in total
+                            onChange={(ev) => store_setDateRange({ to: splitDateString(ev.target.value) })}
                         />
                     </label>
                 </div>
@@ -38,7 +41,3 @@ const ChooseDateRange = () => {
 };
 
 export default ChooseDateRange;
-
-function _isValidDateRange(from: string, to: string) {
-    return to > from;
-}
