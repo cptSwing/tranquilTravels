@@ -4,10 +4,10 @@ import { ZustandStore } from '../types/types';
 import config from '../config/config.json';
 
 export const useZustandStore = create<ZustandStore>()(
-    immer((set, get) => ({
+    immer((set, _get) => ({
         values: {
             countries: [],
-            travelDates: {
+            dateRange: {
                 from: config.date.from,
                 to: config.date.to,
             },
@@ -20,10 +20,9 @@ export const useZustandStore = create<ZustandStore>()(
                 });
             },
 
-            store_setTravelDates(travelDates) {
-                console.log('%c[zustandStore]', 'color: #b7b528', `travelDates :`, travelDates);
+            store_setDateRange(dateRange) {
                 set((draftStore) => {
-                    draftStore.values.travelDates = { ...draftStore.values.travelDates, ...travelDates };
+                    draftStore.values.dateRange = { ...draftStore.values.dateRange, ...dateRange };
                 });
             },
         },

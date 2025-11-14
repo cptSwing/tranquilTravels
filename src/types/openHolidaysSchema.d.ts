@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/Countries": {
+    '/Countries': {
         parameters: {
             query?: never;
             header?: never;
@@ -33,10 +33,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["CountryResponse"][];
-                        "text/json": components["schemas"]["CountryResponse"][];
-                        "text/plain": components["schemas"]["CountryResponse"][];
-                        "text/csv": components["schemas"]["CountryResponse"][];
+                        'application/json': components['schemas']['CountryResponse'][];
+                        'text/json': components['schemas']['CountryResponse'][];
+                        'text/plain': components['schemas']['CountryResponse'][];
+                        'text/csv': components['schemas']['CountryResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -45,7 +45,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -54,7 +54,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -67,7 +67,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/Groups": {
+    '/Groups': {
         parameters: {
             query?: never;
             header?: never;
@@ -103,10 +103,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GroupResponse"][];
-                        "text/json": components["schemas"]["GroupResponse"][];
-                        "text/plain": components["schemas"]["GroupResponse"][];
-                        "text/csv": components["schemas"]["GroupResponse"][];
+                        'application/json': components['schemas']['GroupResponse'][];
+                        'text/json': components['schemas']['GroupResponse'][];
+                        'text/plain': components['schemas']['GroupResponse'][];
+                        'text/csv': components['schemas']['GroupResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -115,7 +115,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -124,7 +124,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -137,7 +137,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/Languages": {
+    '/Languages': {
         parameters: {
             query?: never;
             header?: never;
@@ -166,10 +166,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["LanguageResponse"][];
-                        "text/json": components["schemas"]["LanguageResponse"][];
-                        "text/plain": components["schemas"]["LanguageResponse"][];
-                        "text/csv": components["schemas"]["LanguageResponse"][];
+                        'application/json': components['schemas']['LanguageResponse'][];
+                        'text/json': components['schemas']['LanguageResponse'][];
+                        'text/plain': components['schemas']['LanguageResponse'][];
+                        'text/csv': components['schemas']['LanguageResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -178,7 +178,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -187,7 +187,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -200,7 +200,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/PublicHolidays": {
+    '/PublicHolidays': {
         parameters: {
             query?: never;
             header?: never;
@@ -249,11 +249,11 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["HolidayResponse"][];
-                        "text/json": components["schemas"]["HolidayResponse"][];
-                        "text/plain": components["schemas"]["HolidayResponse"][];
-                        "text/calendar": components["schemas"]["HolidayResponse"][];
-                        "text/csv": components["schemas"]["HolidayResponse"][];
+                        'application/json': components['schemas']['HolidayResponse'][];
+                        'text/json': components['schemas']['HolidayResponse'][];
+                        'text/plain': components['schemas']['HolidayResponse'][];
+                        'text/calendar': components['schemas']['HolidayResponse'][];
+                        'text/csv': components['schemas']['HolidayResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -262,7 +262,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -271,7 +271,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -284,7 +284,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/PublicHolidaysByDate": {
+    '/PublicHolidaysByDate': {
         parameters: {
             query?: never;
             header?: never;
@@ -318,10 +318,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["HolidayByDateResponse"][];
-                        "text/json": components["schemas"]["HolidayByDateResponse"][];
-                        "text/plain": components["schemas"]["HolidayByDateResponse"][];
-                        "text/csv": components["schemas"]["HolidayByDateResponse"][];
+                        'application/json': components['schemas']['HolidayByDateResponse'][];
+                        'text/json': components['schemas']['HolidayByDateResponse'][];
+                        'text/plain': components['schemas']['HolidayByDateResponse'][];
+                        'text/csv': components['schemas']['HolidayByDateResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -330,7 +330,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -339,7 +339,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -352,7 +352,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/SchoolHolidays": {
+    '/SchoolHolidays': {
         parameters: {
             query?: never;
             header?: never;
@@ -403,11 +403,11 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["HolidayResponse"][];
-                        "text/json": components["schemas"]["HolidayResponse"][];
-                        "text/plain": components["schemas"]["HolidayResponse"][];
-                        "text/calendar": components["schemas"]["HolidayResponse"][];
-                        "text/csv": components["schemas"]["HolidayResponse"][];
+                        'application/json': components['schemas']['HolidayResponse'][];
+                        'text/json': components['schemas']['HolidayResponse'][];
+                        'text/plain': components['schemas']['HolidayResponse'][];
+                        'text/calendar': components['schemas']['HolidayResponse'][];
+                        'text/csv': components['schemas']['HolidayResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -416,7 +416,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -425,7 +425,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -438,7 +438,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/SchoolHolidaysByDate": {
+    '/SchoolHolidaysByDate': {
         parameters: {
             query?: never;
             header?: never;
@@ -472,10 +472,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["HolidayByDateResponse"][];
-                        "text/json": components["schemas"]["HolidayByDateResponse"][];
-                        "text/plain": components["schemas"]["HolidayByDateResponse"][];
-                        "text/csv": components["schemas"]["HolidayByDateResponse"][];
+                        'application/json': components['schemas']['HolidayByDateResponse'][];
+                        'text/json': components['schemas']['HolidayByDateResponse'][];
+                        'text/plain': components['schemas']['HolidayByDateResponse'][];
+                        'text/csv': components['schemas']['HolidayByDateResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -484,7 +484,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -493,7 +493,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -506,7 +506,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/Statistics/PublicHolidays": {
+    '/Statistics/PublicHolidays': {
         parameters: {
             query?: never;
             header?: never;
@@ -540,9 +540,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["StatisticsResponse"][];
-                        "text/json": components["schemas"]["StatisticsResponse"][];
-                        "text/plain": components["schemas"]["StatisticsResponse"][];
+                        'application/json': components['schemas']['StatisticsResponse'][];
+                        'text/json': components['schemas']['StatisticsResponse'][];
+                        'text/plain': components['schemas']['StatisticsResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -551,7 +551,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -560,7 +560,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -573,7 +573,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/Statistics/SchoolHolidays": {
+    '/Statistics/SchoolHolidays': {
         parameters: {
             query?: never;
             header?: never;
@@ -609,9 +609,9 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["StatisticsResponse"][];
-                        "text/json": components["schemas"]["StatisticsResponse"][];
-                        "text/plain": components["schemas"]["StatisticsResponse"][];
+                        'application/json': components['schemas']['StatisticsResponse'][];
+                        'text/json': components['schemas']['StatisticsResponse'][];
+                        'text/plain': components['schemas']['StatisticsResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -620,7 +620,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -629,7 +629,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -642,7 +642,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/Subdivisions": {
+    '/Subdivisions': {
         parameters: {
             query?: never;
             header?: never;
@@ -676,10 +676,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["SubdivisionResponse"][];
-                        "text/json": components["schemas"]["SubdivisionResponse"][];
-                        "text/plain": components["schemas"]["SubdivisionResponse"][];
-                        "text/csv": components["schemas"]["SubdivisionResponse"][];
+                        'application/json': components['schemas']['SubdivisionResponse'][];
+                        'text/json': components['schemas']['SubdivisionResponse'][];
+                        'text/plain': components['schemas']['SubdivisionResponse'][];
+                        'text/csv': components['schemas']['SubdivisionResponse'][];
                     };
                 };
                 /** @description Bad Request */
@@ -688,7 +688,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
                 /** @description Internal Server Error */
@@ -697,7 +697,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/problem+json": components["schemas"]["ProblemDetails"];
+                        'application/problem+json': components['schemas']['ProblemDetails'];
                     };
                 };
             };
@@ -742,7 +742,7 @@ export interface components {
              *       }
              *     ]
              */
-            name: components["schemas"]["LocalizedText"][];
+            name: components['schemas']['LocalizedText'][];
             /**
              * @description Official ISO-639-1 language codes
              * @example [
@@ -779,9 +779,9 @@ export interface components {
              *       }
              *     ]
              */
-            category: components["schemas"]["LocalizedText"][];
+            category: components['schemas']['LocalizedText'][];
             /** @description Child zones */
-            children?: components["schemas"]["GroupResponse"][] | null;
+            children?: components['schemas']['GroupResponse'][] | null;
             /**
              * @description Group code
              * @example FR-ZA
@@ -791,7 +791,7 @@ export interface components {
              * @description Localized comments of the group
              * @example null
              */
-            comment: components["schemas"]["LocalizedText"][];
+            comment: components['schemas']['LocalizedText'][];
             /**
              * @description Localized names of the group
              * @example [
@@ -805,22 +805,22 @@ export interface components {
              *       }
              *     ]
              */
-            name: components["schemas"]["LocalizedText"][];
+            name: components['schemas']['LocalizedText'][];
             /**
              * @description Short name for display
              * @example ZA
              */
             shortName: string;
             /** @description List of subdivision references */
-            subdivisions?: components["schemas"]["SubdivisionReference"][] | null;
+            subdivisions?: components['schemas']['SubdivisionReference'][] | null;
         };
         /** @description Representation of a holiday by date */
         HolidayByDateResponse: {
             /** @description Additional localized comments */
-            comment?: components["schemas"]["LocalizedText"][] | null;
-            country: components["schemas"]["CountryReference"];
+            comment?: components['schemas']['LocalizedText'][] | null;
+            country: components['schemas']['CountryReference'];
             /** @description List of group references */
-            groups?: components["schemas"]["GroupReference"][] | null;
+            groups?: components['schemas']['GroupReference'][] | null;
             /**
              * Format: uuid
              * @description Unique holiday id
@@ -828,23 +828,23 @@ export interface components {
              */
             id: string;
             /** @description Localized names of the holiday */
-            name: components["schemas"]["LocalizedText"][];
+            name: components['schemas']['LocalizedText'][];
             /**
              * @description Is the holiday nationwide?
              * @example true
              */
             nationwide: boolean;
-            regionalScope?: components["schemas"]["RegionalScope"];
+            regionalScope?: components['schemas']['RegionalScope'];
             /** @description List of subdivision references */
-            subdivisions?: components["schemas"]["SubdivisionReference"][] | null;
-            tags?: components["schemas"]["HolidayTags"];
-            temporalScope?: components["schemas"]["TemporalScope"];
-            type: components["schemas"]["HolidayType"];
+            subdivisions?: components['schemas']['SubdivisionReference'][] | null;
+            tags?: components['schemas']['HolidayTags'];
+            temporalScope?: components['schemas']['TemporalScope'];
+            type: components['schemas']['HolidayType'];
         };
         /** @description Representation of a holiday */
         HolidayResponse: {
             /** @description Additional localized comments */
-            comment?: components["schemas"]["LocalizedText"][] | null;
+            comment?: components['schemas']['LocalizedText'][] | null;
             /**
              * Format: date
              * @description End date of the holiday
@@ -858,13 +858,13 @@ export interface components {
              */
             id: string;
             /** @description Localized names of the holiday */
-            name: components["schemas"]["LocalizedText"][];
+            name: components['schemas']['LocalizedText'][];
             /**
              * @description Is the holiday nationwide?
              * @example true
              */
             nationwide: boolean;
-            regionalScope?: components["schemas"]["RegionalScope"];
+            regionalScope?: components['schemas']['RegionalScope'];
             /**
              * Format: date
              * @description Start date of the holiday
@@ -872,23 +872,23 @@ export interface components {
              */
             startDate: string;
             /** @description List of subdivision references */
-            subdivisions?: components["schemas"]["SubdivisionReference"][] | null;
+            subdivisions?: components['schemas']['SubdivisionReference'][] | null;
             /** @description List of group references */
-            groups?: components["schemas"]["GroupReference"][] | null;
-            tags?: components["schemas"]["HolidayTags"];
-            temporalScope?: components["schemas"]["TemporalScope"];
-            type: components["schemas"]["HolidayType"];
+            groups?: components['schemas']['GroupReference'][] | null;
+            tags?: components['schemas']['HolidayTags'];
+            temporalScope?: components['schemas']['TemporalScope'];
+            type: components['schemas']['HolidayType'];
         };
         /**
          * @description Additional holiday tags
          * @enum {string}
          */
-        HolidayTags: "Recommended" | "Provisional" | "OneTime" | "Exception";
+        HolidayTags: 'Recommended' | 'Provisional' | 'OneTime' | 'Exception';
         /**
          * @description Type of holiday
          * @enum {string}
          */
-        HolidayType: "Public" | "Bank" | "Optional" | "School" | "BackToSchool" | "EndOfLessons";
+        HolidayType: 'Public' | 'Bank' | 'Optional' | 'School' | 'BackToSchool' | 'EndOfLessons';
         /** @description Representation of a language as defined in ISO-639-1 */
         LanguageResponse: {
             /**
@@ -909,7 +909,7 @@ export interface components {
              *       }
              *     ]
              */
-            name: components["schemas"]["LocalizedText"][];
+            name: components['schemas']['LocalizedText'][];
         };
         /** @description A localized text string */
         LocalizedText: {
@@ -932,7 +932,7 @@ export interface components {
          * @description Regional scope of a holdiay
          * @enum {string}
          */
-        RegionalScope: "National" | "Regional" | "Local";
+        RegionalScope: 'National' | 'Regional' | 'Local';
         /** @description Statistical data of the holidays database */
         StatisticsResponse: {
             /**
@@ -974,9 +974,9 @@ export interface components {
              *       }
              *     ]
              */
-            category: components["schemas"]["LocalizedText"][];
+            category: components['schemas']['LocalizedText'][];
             /** @description Child subdivisions */
-            children?: components["schemas"]["SubdivisionResponse"][] | null;
+            children?: components['schemas']['SubdivisionResponse'][] | null;
             /**
              * @description Subdivision code
              * @example FR-BF
@@ -986,9 +986,9 @@ export interface components {
              * @description Localized comments of the subdivision
              * @example null
              */
-            comment: components["schemas"]["LocalizedText"][];
+            comment: components['schemas']['LocalizedText'][];
             /** @description List of group references */
-            groups?: components["schemas"]["GroupReference"][] | null;
+            groups?: components['schemas']['GroupReference'][] | null;
             /**
              * @description ISO 3166-2 subdivision code (if defined)
              * @example FR-BFC
@@ -1003,7 +1003,7 @@ export interface components {
              *       }
              *     ]
              */
-            name: components["schemas"]["LocalizedText"][];
+            name: components['schemas']['LocalizedText'][];
             /** @description Official languages as ISO-639-1 codes */
             officialLanguages: string[];
             /**
@@ -1016,7 +1016,7 @@ export interface components {
          * @description Temporal scope of a holdiay
          * @enum {string}
          */
-        TemporalScope: "FullDay" | "HalfDay";
+        TemporalScope: 'FullDay' | 'HalfDay';
     };
     responses: never;
     parameters: never;

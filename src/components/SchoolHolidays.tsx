@@ -5,7 +5,7 @@ import { components } from '../types/openHolidaysSchema';
 
 const SchoolHolidays = () => {
     const selectedCountries = useZustandStore((store) => store.values.countries);
-    const { from, to } = useZustandStore((store) => store.values.travelDates);
+    const { from, to } = useZustandStore((store) => store.values.dateRange);
 
     const { data, error, isLoading } = $api.useQuery(
         'get',

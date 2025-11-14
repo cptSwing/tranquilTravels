@@ -1,11 +1,13 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientTanstack } from './lib/api';
-import ChooseCountry from './components/ChooseCountry';
+import ChooseCountries from './components/ChooseCountries';
 import SchoolHolidays from './components/SchoolHolidays';
-import ChooseTravelDates from './components/ChooseTravelDates';
+import ChooseDateRange from './components/ChooseDateRange';
 import { useZustandStore } from './lib/zustandStore';
-import { useMemo } from 'react';
-import { WEEKDAYS } from './types/enums';
+import { classNames } from 'cpts-javascript-utilities';
+import { Fragment, useMemo } from 'react';
+import { WEEKDAY } from './types/consts';
+import { MonthData } from './types/types';
 
 const App = () => (
     <div className="h-dvh w-dvw [--header-height:--spacing(24)]">
@@ -21,26 +23,15 @@ const App = () => (
         <QueryClientProvider client={queryClientTanstack}>
             <main className="absolute top-(--header-height) flex w-full flex-col gap-y-2 bg-green-600 p-2">
                 <div className="flex justify-around gap-x-2">
-                    <div className="bg-gray-500 p-2">
-                        <h4>Pick Travel Dates</h4>
-                        <div className="h-24 py-8">
-                            <ChooseTravelDates />
-                        </div>
-                    </div>
-
-                    <div className="bg-gray-500 p-2">
-                        <h4>Pick Countries to Query</h4>
-                        <div className="h-24 py-8">
-                            <ChooseCountry />
-                        </div>
-                    </div>
+                    <ChooseDateRange />
+                    <ChooseCountries />
                 </div>
 
-                <div className="bg-gray-500 p-2">
+                <div className="bg-neutral-500 p-2">
                     <Months />
                 </div>
 
-                <div className="bg-gray-500 p-2">
+                <div className="bg-neutral-500 p-2">
                     <SchoolHolidays />
                 </div>
             </main>
@@ -50,119 +41,118 @@ const App = () => (
 export default App;
 
 const Months = () => {
-    const { from, to } = useZustandStore((store) => store.values.travelDates);
+    const { from, to } = useZustandStore((store) => store.values.dateRange);
 
-    const dates = useMemo(() => {
+    const monthsData: MonthData[] | undefined = useMemo(() => {
         if (from && to) {
+            // Example: 2025-02-25
             const starting = new Date(from);
-
-            const startingDate = starting.getDate();
-            const startingMonth = starting.getMonth();
-            const startingYear = starting.getFullYear();
-            const startingFirstWeekdayOfMonth = new Date(startingYear, startingMonth).getDay();
-            // TODO ^ can use starting.getDay() and go back to first of month, cycling to correct weekday??
+            const startingDate = starting.getDate(); // 25
+            const startingDay = starting.getDay(); // 2 (was a Tuesday, 0-based, starts on Sunday)
+            const startingMonth = starting.getMonth(); // 1 (0-based index)
+            const startingYear = starting.getFullYear(); // 2025
+            const startingFirstWeekdayOfMonth = (startingDay - ((startingDate - 1) % 7) + 7) % 7;
 
             const ending = new Date(to);
-
             const endingDate = ending.getDate();
+            const endingDay = ending.getDay();
             const endingMonth = ending.getMonth();
             const endingYear = ending.getFullYear();
-            const endingFirstWeekdayOfMonth = new Date(endingYear, endingMonth).getDay();
+            const endingFirstWeekdayOfMonth = (endingDay - ((endingDate - 1) % 7) + 7) % 7;
 
-            return {
-                start: {
-                    day: startingDate,
-                    month: startingMonth,
-                    year: startingYear,
+            const monthsBetween = (endingMonth - (startingMonth % 12) + 12) % 12; // WARN bugs out at 12+ months, but should suffice
+
+            const monthDates = Array.from({ length: monthsBetween + 1 }).map((_, idx, arr) => {
+                if (idx === 0) {
+                    return {
+                        date: startingDate,
+                        month: startingMonth,
+                        year: startingYear,
+                        firstWeekDay: startingFirstWeekdayOfMonth,
+                    };
+                } else if (idx === arr.length - 1) {
+                    return {
+                        date: endingDate,
+                        month: endingMonth,
+                        year: endingYear,
+                        firstWeekDay: endingFirstWeekdayOfMonth,
+                    };
+                }
+
+                const monthStep = (startingMonth + idx) % 12;
+                return {
+                    date: 0,
+                    month: monthStep,
+                    year: monthStep < startingMonth ? startingYear + 1 : startingYear,
                     firstWeekDay: startingFirstWeekdayOfMonth,
-                },
-                end: {
-                    day: endingDate,
-                    month: endingMonth,
-                    year: endingYear,
-                    firstWeekDay: endingFirstWeekdayOfMonth,
-                },
-            };
+                };
+            });
+
+            return monthDates;
         }
     }, [from, to]);
 
-    return dates ? (
-        <div className="grid grid-cols-5 gap-2">
-            <div className="bg-neutral-300 p-2 text-center">
-                {dates.start.month + 1}/{dates.start.year}
-                <div className="grid grid-cols-7">
-                    <Weekdays />
-                    <StartMonth date={dates.start} />
-                </div>
-            </div>
-
-            <div className="bg-neutral-300 p-2 text-center">
-                {dates.end.month + 1}/{dates.end.year}
-                <div className="grid grid-cols-7">
-                    <Weekdays />
-                    <EndMonth date={dates.end} />
-                </div>
-            </div>
+    return monthsData ? (
+        <div className="grid grid-cols-4 gap-2">
+            {monthsData.map((monthData, idx, arr) => {
+                const monthPosition = idx === 0 ? 'first' : idx === arr.length - 1 ? 'last' : 'middle';
+                return <MonthlyView key={monthPosition + idx} monthData={monthData} monthPosition={monthPosition} />;
+            })}
         </div>
     ) : null;
 };
 
-const StartMonth = ({
-    date,
-}: {
-    date: {
-        day: number;
-        month: number;
-        year: number;
-        firstWeekDay: number;
-    };
-}) => {
-    const { day, month, year, firstWeekDay } = date;
+const MonthlyView = ({ monthData, monthPosition }: { monthData: MonthData; monthPosition: 'first' | 'middle' | 'last' }) => {
+    const { date, month, year, firstWeekDay } = monthData;
 
-    const paintedDays = Array.from({ length: daysInMonth(month, year) }).map((_, idx) => (
-        <div key={idx} className="text-center" style={{ backgroundColor: idx + 1 >= day ? 'yellow' : undefined }}>
-            {idx + 1}
-        </div>
-    ));
-
-    paintedDays.unshift(...Array.from({ length: firstWeekDay }).map((_, idx) => <div key={'empty' + idx}> </div>));
-
-    return paintedDays;
-};
-
-const EndMonth = ({
-    date,
-}: {
-    date: {
-        day: number;
-        month: number;
-        year: number;
-        firstWeekDay: number;
-    };
-}) => {
-    const { day, month, year, firstWeekDay } = date;
-
-    const paintedDays = Array.from({ length: daysInMonth(month, year) }).map((_, idx) => (
-        <div key={idx} className="text-center" style={{ backgroundColor: idx + 1 <= day ? 'yellow' : undefined }}>
-            {idx + 1}
-        </div>
-    ));
-
-    paintedDays.unshift(...Array.from({ length: firstWeekDay }).map((_, idx) => <div key={'empty' + idx}> </div>));
-
-    return paintedDays;
-};
-
-const Weekdays = () =>
-    Object.keys(WEEKDAYS)
-        .slice(7)
-        .map((enumWeekday, idx) => (
-            <div key={idx} className="text-center">
-                {enumWeekday}
+    const paintedDayElements_Memo = useMemo(() => {
+        const paintedDayElements = Array.from({ length: daysInMonth(month, year) }).map((_, idx) => (
+            <div
+                key={idx}
+                className={classNames(
+                    'text-center',
+                    monthPosition === 'first'
+                        ? idx + 1 >= date
+                            ? 'bg-yellow-300'
+                            : 'bg-neutral-200'
+                        : monthPosition === 'last'
+                          ? idx + 1 <= date
+                              ? 'bg-yellow-300'
+                              : 'bg-neutral-200'
+                          : // monthPosition === 'middle'
+                            'bg-yellow-300',
+                )}
+            >
+                {idx + 1}
             </div>
         ));
 
-// https://stackoverflow.com/a/315767
+        // Add empty cells to display calendar dates at correct starting weekday:
+        paintedDayElements.unshift(...Array.from({ length: firstWeekDay }).map((_, idx) => <div key={idx}> </div>));
+        return paintedDayElements;
+    }, [date, firstWeekDay, month, monthPosition, year]);
+
+    return (
+        <div className="rounded-xs bg-neutral-300 p-2 text-center shadow-md">
+            {monthData.month + 1}/{monthData.year}
+            <div className="grid grid-cols-7">
+                <WeekdayNames />
+                {paintedDayElements_Memo.map((elem, idx) => (
+                    <Fragment key={idx}>{elem}</Fragment>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const WeekdayNames = () =>
+    WEEKDAY.map((constWeekday, idx) => (
+        <div key={constWeekday + idx} className="text-center">
+            {constWeekday}
+        </div>
+    ));
+
+// https://stackoverflow.com/a/315767 - skips to next month and by picking date 0, wraps back to last date of previous month
 function daysInMonth(month: number, year: number) {
     return new Date(year, month + 1, 0).getDate();
 }
