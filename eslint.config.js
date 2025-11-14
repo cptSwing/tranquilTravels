@@ -6,19 +6,19 @@ import reactRefreshEslint from 'eslint-plugin-react-refresh';
 import tsEslint from 'typescript-eslint';
 import prettierEslintRecommended from 'eslint-plugin-prettier/recommended';
 import jsxA11yEslint from 'eslint-plugin-jsx-a11y';
-import pluginQuery from '@tanstack/eslint-plugin-query';
+import pluginQueryEslint from '@tanstack/eslint-plugin-query';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig(
     { ignores: ['dist'] },
     {
         extends: [
-            ...pluginQuery.configs['flat/recommended'],
+            ...pluginQueryEslint.configs['flat/recommended'],
             jsEslint.configs.recommended,
             reactEslint.configs.flat.recommended,
             reactEslint.configs.flat['jsx-runtime'],
             reactRefreshEslint.configs.recommended,
-            reactHooksEslint.configs['recommended-latest'],
+            reactHooksEslint.configs.flat.recommended,
             jsxA11yEslint.flatConfigs.recommended,
             ...tsEslint.configs.recommended,
             prettierEslintRecommended,
