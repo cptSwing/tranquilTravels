@@ -4,8 +4,8 @@ export interface ZustandStore {
     values: {
         countries: components['schemas']['CountryReference']['isoCode'][];
         dateRange: {
-            from: string; // 2025-01-01 (Date.toLocaleDateString('en-CA'))
-            to: string; // 2025-12-31
+            from: DateType;
+            to: DateType;
         };
     };
     methods: {
@@ -14,9 +14,16 @@ export interface ZustandStore {
     };
 }
 
+export type DateType = {
+    date: number;
+    monthIndex: number;
+    year: number;
+};
+
 export type MonthData = {
     date: number;
     month: number;
     year: number;
+    daysInMonth: number;
     firstWeekDay: number;
 };

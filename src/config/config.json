@@ -1,7 +1,7 @@
 {
     "language": "EN",
     "date": {
-        "from": "2025-01-01",
-        "to": "2025-12-31"
+        "from": { "date": 15, "monthIndex": 8, "year": 2025 },
+        "to": { "date": 14, "monthIndex": 1, "year": 2026 }
     }
 }
