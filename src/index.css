@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+/* @plugin 'tailwindcss-breakpoints-inspector'; */
 
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -67,4 +68,11 @@ button:focus-visible {
     button {
         background-color: #f9f9f9;
     }
+}
+
+@theme {
+    --text-2xs: 0.625rem;
+    --text-2xs--line-height: 0.875rem;
+    --text-3xs: 0.5rem;
+    --text-3xs--line-height: 0.7rem;
 }

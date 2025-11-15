@@ -7,41 +7,6 @@ import { useZustandStore } from '../lib/zustandStore';
 const store_setCountries = useZustandStore.getState().methods.store_setCountries;
 
 const ChooseCountries = () => {
-    const { listCountries, errorCountries: _errorCountries, isLoadingCountries: _isLoadingCountries } = useCountries();
-    const selectedCountries = useZustandStore((store) => store.values.countries);
-    const hasSelectedCountries = isDefined(selectedCountries[0]);
-
-    return (
-        <div className="rounded-xs bg-neutral-500 p-2 shadow-lg">
-            <h4>Pick Countries to Query</h4>
-            <div className="h-24 py-8">
-                <label>
-                    Pick countries to avoid:
-                    <br />
-                    {/* TODO expand to multiple selections */}
-                    <select
-                        name="select-isocodes"
-                        className="rounded-xs bg-neutral-100"
-                        value={selectedCountries[0]}
-                        onChange={(ev) => store_setCountries([ev.target.value])}
-                    >
-                        {!hasSelectedCountries && <option>select..</option>}
-                        {listCountries &&
-                            listCountries.map((countryName, idx) => (
-                                <option key={countryName.text + idx} value={countryName.isoCode}>
-                                    {countryName.text}
-                                </option>
-                            ))}
-                    </select>
-                </label>
-            </div>
-        </div>
-    );
-};
-
-export default ChooseCountries;
-
-const useCountries = () => {
     const { data, error, isLoading } = $api.useQuery('get', '/Countries');
 
     const listCountries = useMemo(() => {
@@ -49,7 +14,6 @@ const useCountries = () => {
             const countries = data
                 .map((countryResponse) => {
                     const nameInLanguage = countryResponse.name.find((localizedText) => localizedText.language === config.language);
-
                     if (nameInLanguage) return { isoCode: countryResponse.isoCode, text: nameInLanguage.text };
                 })
                 .filter(isDefined);
@@ -57,5 +21,44 @@ const useCountries = () => {
         }
     }, [data]);
 
-    return { listCountries, errorCountries: error, isLoadingCountries: isLoading };
+    const selectedCountries = useZustandStore((store) => store.values.countries);
+    const hasSelectedCountries = isDefined(selectedCountries[0]);
+
+    if (error) {
+        return (
+            <>
+                An error occured (Status {error.status}): {error.title}
+                <br />
+                {JSON.stringify(error.detail)}
+                <br />
+                {JSON.stringify(error.errors)}
+            </>
+        );
+    }
+    if (isLoading) return 'Loading...';
+
+    return (
+        <div className="rounded-xs bg-neutral-300 p-2 shadow-lg">
+            <label>
+                Pick countries to avoid:
+                <br />
+                {/* TODO expand to multiple selections */}
+                <select
+                    name="select-isocodes"
+                    className="w-full rounded-xs bg-neutral-100 pl-1 text-justify"
+                    value={selectedCountries[0]}
+                    onChange={(ev) => store_setCountries([ev.target.value])}
+                >
+                    {!hasSelectedCountries && <option>select..</option>}
+                    {listCountries?.map((countryName, idx) => (
+                        <option key={countryName.text + idx} value={countryName.isoCode}>
+                            {countryName.text}
+                        </option>
+                    ))}
+                </select>
+            </label>
+        </div>
+    );
 };
+
+export default ChooseCountries;
