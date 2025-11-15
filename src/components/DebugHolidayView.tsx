@@ -1,8 +1,32 @@
 import useProcessHolidayResponse from '../hooks/useProcessHolidayResponse';
 import { components } from '../types/openHolidaysSchema';
+import { $api } from '../lib/api';
+import config from '../config/config.json';
+import isDefined from '../lib/isDefined';
+import { useZustandStore } from '../lib/zustandStore';
 
-const SchoolHolidays = () => {
-    const { data, blockedRanges, freeRanges, error, isLoading } = useProcessHolidayResponse('school');
+const DebugHolidayView = () => {
+    const selectedCountries = useZustandStore((store) => store.values.countries);
+    const { from, to } = useZustandStore((store) => store.values.dateRange);
+
+    const { data, error, isLoading } = $api.useQuery(
+        'get',
+        '/SchoolHolidays',
+        {
+            params: {
+                query: {
+                    countryIsoCode: selectedCountries[0],
+                    validFrom: from.dateString,
+                    validTo: to.dateString,
+                    languageIsoCode: config.language,
+                },
+            },
+        },
+        {
+            enabled: isDefined(selectedCountries[0]),
+        },
+    );
+    const { blockedRanges, freeRanges } = useProcessHolidayResponse(data, from.dateString, to.dateString);
 
     if (error) {
         return (
@@ -16,7 +40,7 @@ const SchoolHolidays = () => {
         );
     }
     if (isLoading) return 'Loading...';
-    if (!data || !blockedRanges) return;
+    if (!blockedRanges || !freeRanges) return;
 
     return (
         <>
@@ -29,7 +53,7 @@ const SchoolHolidays = () => {
             <hr className="my-2" />
 
             <div className="grid grid-cols-5 gap-2">
-                {data.map((holidayResponse) => (
+                {data?.map((holidayResponse) => (
                     <HolidayList key={holidayResponse.id} holiday={holidayResponse} />
                 ))}
             </div>
@@ -37,7 +61,7 @@ const SchoolHolidays = () => {
     );
 };
 
-export default SchoolHolidays;
+export default DebugHolidayView;
 
 const HolidayList = ({ holiday }: { holiday: components['schemas']['HolidayResponse'] }) => {
     const { name, startDate, endDate, type, regionalScope, subdivisions, groups } = holiday;
