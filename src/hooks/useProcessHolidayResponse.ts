@@ -1,38 +1,16 @@
-import { $api } from '../lib/api';
-import config from '../config/config.json';
-import isDefined from '../lib/isDefined';
-import { useZustandStore } from '../lib/zustandStore';
 import { useMemo } from 'react';
-import { getDateString, splitDateString } from '../lib/handleDates';
+import { splitDateString } from '../lib/handleDates';
+import { components } from '../types/openHolidaysSchema';
+import { DateRange, DateType } from '../types/types';
 
-const useProcessHolidayResponse = (holidayType: 'public' | 'school') => {
-    const selectedCountries = useZustandStore((store) => store.values.countries);
-    const { from, to } = useZustandStore((store) => store.values.dateRange);
-    const fromDateString = getDateString(from);
-    const toDateString = getDateString(to);
-
-    const { data, error, isLoading } = $api.useQuery(
-        'get',
-        holidayType === 'school' ? '/SchoolHolidays' : '/PublicHolidays',
-        {
-            params: {
-                query: {
-                    countryIsoCode: selectedCountries[0],
-                    validFrom: fromDateString,
-                    validTo: toDateString,
-                    languageIsoCode: config.language,
-                },
-            },
-        },
-        {
-            enabled: isDefined(selectedCountries[0]),
-        },
-    );
-
+const useProcessHolidayResponse = (
+    holidaysResponse: components['schemas']['HolidayResponse'][] | undefined,
+    from: DateType['dateString'],
+    to: DateType['dateString'],
+) => {
     const timeRanges_Memo = useMemo(() => {
-        if (data) {
-            const sorted = [...data].sort((a, b) => a.startDate.localeCompare(b.startDate));
-
+        if (holidaysResponse) {
+            const sorted = [...holidaysResponse].sort((a, b) => a.startDate.localeCompare(b.startDate));
             const merged = [];
 
             for (let i = 0; i < sorted.length; i++) {
@@ -51,13 +29,26 @@ const useProcessHolidayResponse = (holidayType: 'public' | 'school') => {
                             : // neither:
                               '';
 
+                // Snip to user range, but do I necessarily want that?
+                // const currentStripped = {
+                //     startDate: current.startDate <= from ? from : current.startDate,
+                //     endDate: current.endDate >= to ? to : current.endDate,
+                //     name: current.name,
+                // };
+
+                const currentStripped = {
+                    startDate: current.startDate,
+                    endDate: current.endDate,
+                    name: current.name,
+                };
+
                 if (merged.length === 0) {
                     merged.push({
-                        ...current,
+                        ...currentStripped,
                         name: [
                             {
                                 language: 'EN',
-                                text: current.name[0].text + ' ' + currentDescriptionText,
+                                text: currentStripped.name[0].text + ' ' + currentDescriptionText,
                             },
                         ],
                     });
@@ -66,77 +57,85 @@ const useProcessHolidayResponse = (holidayType: 'public' | 'school') => {
 
                 const last = merged[merged.length - 1];
 
-                // check overlap: current.start <= last.end
-                if (current.startDate <= last.endDate) {
+                if (currentStripped.startDate <= last.endDate) {
+                    last.name[0].text = `${last.name[0].text}, ${currentStripped.name[0].text} ${currentDescriptionText}`;
+
                     // Extend the end date if necessary
-
-                    last.name[0].text = `${last.name[0].text}, ${current.name[0].text} ${currentDescriptionText}`;
-                    if (last.groups && current.groups) {
-                        current.groups.forEach((curElem) => {
-                            if (!last.groups!.some((lastElem) => lastElem.code === curElem.code)) {
-                                last.groups!.push(curElem);
-                            }
-                        });
+                    if (currentStripped.endDate > last.endDate) {
+                        last.endDate = currentStripped.endDate;
                     }
 
-                    if (last.subdivisions && current.subdivisions) {
-                        current.subdivisions.forEach((curElem) => {
-                            if (!last.subdivisions!.some((lastElem) => lastElem.code === curElem.code)) {
-                                last.subdivisions!.push(curElem);
-                            }
-                        });
-                    }
+                    // Debug stuff
+                    // if (last.groups && current.groups) {
+                    //     current.groups.forEach((curElem) => {
+                    //         if (!last.groups!.some((lastElem) => lastElem.code === curElem.code)) {
+                    //             last.groups!.push(curElem);
+                    //         }
+                    //     });
+                    // }
 
-                    if (current.endDate > last.endDate) {
-                        last.endDate = current.endDate;
-                    }
+                    // if (last.subdivisions && current.subdivisions) {
+                    //     current.subdivisions.forEach((curElem) => {
+                    //         if (!last.subdivisions!.some((lastElem) => lastElem.code === curElem.code)) {
+                    //             last.subdivisions!.push(curElem);
+                    //         }
+                    //     });
+                    // }
                 } else {
                     // No overlap, push new rangeblock
                     merged.push({
-                        ...current,
+                        ...currentStripped,
                         name: [
                             {
                                 language: 'EN',
-                                text: current.name[0].text + ' ' + currentDescriptionText,
+                                text: currentStripped.name[0].text + ' ' + currentDescriptionText,
                             },
                         ],
                     });
                 }
             }
 
-            const free = [];
+            /* Calculate blocks where no holidays */
 
-            let current = fromDateString;
+            const free: DateRange[] = [];
+            let currentDate = from;
 
             // for (const block of merged) {
             for (let i = 0; i < merged.length; i++) {
                 const blockedRange = merged[i];
 
-                const startDate = splitDateString(current);
-                const oneDayLaterStartDateString = new Date(startDate.year, startDate.monthIndex, startDate.date + 1).toLocaleDateString('en-CA');
-
+                const startDate = splitDateString(currentDate);
                 const endDate = splitDateString(blockedRange.startDate);
-                const oneDayEarlierEndDateString = new Date(endDate.year, endDate.monthIndex, endDate.date - 1).toLocaleDateString('en-CA');
 
-                if (current < blockedRange.startDate) {
-                    free.push({ startDate: current === fromDateString ? fromDateString : oneDayLaterStartDateString, endDate: oneDayEarlierEndDateString });
+                if (startDate && endDate) {
+                    const oneDayLaterStartDateString = new Date(startDate.year, startDate.monthIndex, startDate.date + 1).toLocaleDateString('en-CA');
+                    const oneDayEarlierEndDateString = new Date(endDate.year, endDate.monthIndex, endDate.date - 1).toLocaleDateString('en-CA');
+
+                    if (currentDate < blockedRange.startDate) {
+                        free.push({
+                            startDate: currentDate === from ? from : oneDayLaterStartDateString,
+                            endDate: oneDayEarlierEndDateString,
+                        });
+                    }
+
+                    currentDate = blockedRange.endDate;
                 }
-
-                current = blockedRange.endDate;
             }
 
             // gap after last block
-            if (current < toDateString) {
-                const startDate = splitDateString(current);
-                const startDateString = new Date(startDate.year, startDate.monthIndex, startDate.date + 1).toLocaleDateString('en-CA');
-                free.push({ startDate: startDateString, endDate: toDateString });
+            if (currentDate < to) {
+                const startDate = splitDateString(currentDate);
+                if (startDate) {
+                    const startDateString = new Date(startDate.year, startDate.monthIndex, startDate.date + 1).toLocaleDateString('en-CA');
+                    free.push({ startDate: startDateString, endDate: to });
+                }
             }
 
             return { merged, free };
         }
-    }, [data, fromDateString, toDateString]);
+    }, [holidaysResponse, from, to]);
 
-    return { data, blockedRanges: timeRanges_Memo?.merged, freeRanges: timeRanges_Memo?.free, error, isLoading };
+    return { blockedRanges: timeRanges_Memo?.merged, freeRanges: timeRanges_Memo?.free };
 };
 
 export default useProcessHolidayResponse;
