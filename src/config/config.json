@@ -1,7 +1,7 @@
 {
     "language": "EN",
     "date": {
-        "from": { "date": 15, "monthIndex": 8, "year": 2025 },
-        "to": { "date": 14, "monthIndex": 1, "year": 2026 }
+        "from": { "date": 15, "monthIndex": 8, "year": 2025, "dateString": "2025-09-15" },
+        "to": { "date": 14, "monthIndex": 1, "year": 2026, "dateString": "2026-02-14" }
     }
 }
