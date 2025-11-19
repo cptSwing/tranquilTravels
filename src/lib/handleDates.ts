@@ -1,4 +1,5 @@
-import { DateType } from '../types/types';
+import { DateRangePoint } from '../types/types';
+import { wrapNumber } from './modulo';
 
 /*
     Example date string from OpenHoliday Api: "2025-02-25" (use Date.toLocaleDateString('en-CA'), canadian locale)
@@ -8,14 +9,14 @@ import { DateType } from '../types/types';
     And: --> Day = 2 (get with Date.getDay() - 0-based indices starting on Sundays, the 25th was a TUESDAY)
 */
 
-export function getDateString(dateObject: Omit<DateType, 'dateString'>) {
+export function getDateString(dateObject: Omit<DateRangePoint, 'dateString'>) {
     const { year, monthIndex, date } = dateObject;
     const paddedMonth = (monthIndex + 1).toString().padStart(2, '0');
     const paddedDate = date.toString().padStart(2, '0');
     return `${year}-${paddedMonth}-${paddedDate}`;
 }
 
-export function splitDateString(dateString: DateType['dateString']) {
+export function splitDateString(dateString: DateRangePoint['dateString']) {
     try {
         if (typeof dateString !== 'string') {
             throw new Error(`dateString (${dateString}) is not of type "string"!`);
@@ -46,4 +47,23 @@ export function getDaysInMonth(month: number, year: number) {
 
 export function isInRange(date: string, rangeStart: string, rangeEnd: string) {
     return date >= rangeStart && date <= rangeEnd;
+}
+
+export function getFirstWeekdayIndex(rangePoint: DateRangePoint) {
+    const { date, monthIndex, year } = rangePoint;
+    const dateObj = new Date(year, monthIndex, date); // Example - for the following comments: "2025-02-25"
+    const weekdayIndex = dateObj.getDay();
+    const firstWeekdayIndex = wrapNumber(weekdayIndex - wrapNumber(date - 1, 7) + 7, 7);
+
+    return firstWeekdayIndex;
+}
+
+export function wrapYear(currentMonthIndex: number, currentYear: number, newMonthIndex: number, direction: 'forward' | 'backward'): number {
+    if (currentMonthIndex < newMonthIndex) {
+        return direction === 'forward' ? currentYear : currentYear - 1;
+    } else if (currentMonthIndex > newMonthIndex) {
+        return direction === 'forward' ? currentYear + 1 : currentYear;
+    } else {
+        return currentYear;
+    }
 }
