@@ -4,7 +4,7 @@ import config from '../config/config.json';
 import isDefined from '../lib/isDefined';
 import { useZustandStore } from '../lib/zustandStore';
 
-const store_setCountries = useZustandStore.getState().methods.store_setCountries;
+const { store_setCountries, store_setRangeDescription } = useZustandStore.getState().methods;
 
 const ChooseCountries = () => {
     const { data, error, isLoading } = $api.useQuery('get', '/Countries');
@@ -38,7 +38,7 @@ const ChooseCountries = () => {
     if (isLoading) return 'Loading...';
 
     return (
-        <div className="rounded-xs bg-neutral-300 p-2 shadow-lg">
+        <div className="bg-theme-background-level-2 rounded-xs p-2 shadow-lg">
             <label>
                 Pick countries to avoid:
                 <br />
@@ -47,7 +47,10 @@ const ChooseCountries = () => {
                     name="select-isocodes"
                     className="w-full rounded-xs bg-neutral-100 pl-1 text-justify"
                     value={selectedCountries[0]}
-                    onChange={(ev) => store_setCountries([ev.target.value])}
+                    onChange={(ev) => {
+                        store_setRangeDescription('');
+                        store_setCountries([ev.target.value]);
+                    }}
                 >
                     {!hasSelectedCountries && <option>select..</option>}
                     {listCountries?.map((countryName, idx) => (
