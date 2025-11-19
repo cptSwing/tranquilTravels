@@ -1,64 +1,79 @@
 import { useMemo } from 'react';
-import { getDaysInMonth } from '../lib/handleDates';
+import { getDateString, getDaysInMonth, getFirstWeekdayIndex, wrapYear } from '../lib/handleDates';
 import { wrapNumber } from '../lib/modulo';
-import { DateType, MonthData } from '../types/types';
+import { DateRangePoint, DayCellData, MonthData } from '../types/types';
 
-const useCreateCalendarMonths = (dateRange: { from: DateType; to: DateType }) => {
+const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRangePoint }) => {
     const monthsData: MonthData[] | undefined = useMemo(() => {
         if (dateRange) {
             const { from, to } = dateRange;
-            const starting = new Date(from.year, from.monthIndex, from.date); // Example - for the following comments: "2025-02-25"
-            const startingDay = starting.getDay();
-            const startingFirstWeekdayOfMonth = wrapNumber(startingDay - wrapNumber(from.date - 1, 7) + 7, 7);
 
-            const ending = new Date(to.year, to.monthIndex, to.date);
-            const endingDay = ending.getDay();
-            const endingFirstWeekdayOfMonth = wrapNumber(endingDay - wrapNumber(to.date - 1, 7) + 7, 7);
+            const startingFirstWeekdayOfMonth = getFirstWeekdayIndex(from);
+            const endingFirstWeekdayOfMonth = getFirstWeekdayIndex(to);
 
-            const monthDates: MonthData[] = [];
             const monthsDifference = wrapNumber(to.monthIndex - wrapNumber(from.monthIndex, 12) + 12, 12); // WARN bugs out at 12+ months, but should suffice
+            const indexOfMonthBeforeRange = wrapNumber(from.monthIndex - 1, 12);
+            const yearOfMonthBeforeRange = wrapYear(from.monthIndex, from.year, indexOfMonthBeforeRange, 'backward');
+
+            const months: MonthData[] = [];
 
             for (let i = 0; i < monthsDifference + 1; i++) {
-                const previousMonth = monthDates[i - 1];
+                const previousMonthElement = months[i - 1];
 
                 const monthStep = wrapNumber(from.monthIndex + i, 12);
-                const yearStep = monthStep < from.monthIndex ? from.year + 1 : from.year;
-                const daysInMonth = getDaysInMonth(monthStep, yearStep);
+                const yearStep = wrapYear(from.monthIndex, from.year, monthStep, 'forward');
+                const monthLength = getDaysInMonth(monthStep, yearStep);
 
-                let date, monthIndex, year, firstWeekDay, daysInMonthBefore;
+                let monthIndex, year, firstWeekdayIndex, previousMonthIndex, previousMonthLength, previousMonthYear;
+
                 if (i === 0) {
-                    const monthBeforeRangeIndex = wrapNumber(from.monthIndex - 1, 12);
-
-                    date = from.date;
+                    // first Month
                     monthIndex = from.monthIndex;
                     year = from.year;
-                    firstWeekDay = startingFirstWeekdayOfMonth;
-                    daysInMonthBefore = getDaysInMonth(monthBeforeRangeIndex, monthBeforeRangeIndex > from.monthIndex ? from.year - 1 : from.year);
+                    firstWeekdayIndex = startingFirstWeekdayOfMonth;
+                    previousMonthIndex = indexOfMonthBeforeRange;
+                    previousMonthLength = getDaysInMonth(indexOfMonthBeforeRange, yearOfMonthBeforeRange);
+                    previousMonthYear = yearOfMonthBeforeRange;
                 } else if (i === monthsDifference) {
-                    date = to.date;
+                    // last Month
                     monthIndex = to.monthIndex;
                     year = to.year;
-                    firstWeekDay = endingFirstWeekdayOfMonth;
-                    daysInMonthBefore = previousMonth.daysInMonth;
+                    firstWeekdayIndex = endingFirstWeekdayOfMonth;
+                    previousMonthIndex = previousMonthElement.monthIndex;
+                    previousMonthLength = previousMonthElement.monthLength;
+                    previousMonthYear = previousMonthElement.year;
                 } else {
-                    date = 0;
+                    // in-between
                     monthIndex = monthStep;
                     year = yearStep;
-                    firstWeekDay = wrapNumber(previousMonth.firstWeekDay + previousMonth.daysInMonth, 7);
-                    daysInMonthBefore = previousMonth.daysInMonth;
+                    firstWeekdayIndex = wrapNumber(previousMonthElement.firstWeekdayIndex + previousMonthElement.monthLength, 7);
+                    previousMonthIndex = previousMonthElement.monthIndex;
+                    previousMonthLength = previousMonthElement.monthLength;
+                    previousMonthYear = previousMonthElement.year;
                 }
 
-                monthDates.push({
-                    date,
+                const cells = getDayCells({
+                    monthIndex,
+                    monthLength,
+                    year,
+                    previousMonthIndex,
+                    previousMonthLength,
+                    previousMonthYear,
+                    nextMonthIndex: wrapNumber(monthIndex + 1, 12),
+                    nextMonthYear: wrapYear(monthIndex, year, wrapNumber(monthIndex + 1, 12), 'forward'),
+                    firstWeekdayIndex,
+                });
+
+                months.push({
                     monthIndex,
                     year,
-                    daysInMonth,
-                    daysInMonthBefore,
-                    firstWeekDay,
+                    monthLength,
+                    firstWeekdayIndex,
+                    cells,
                 });
             }
 
-            return monthDates;
+            return months;
         }
     }, [dateRange]);
 
@@ -66,3 +81,63 @@ const useCreateCalendarMonths = (dateRange: { from: DateType; to: DateType }) =>
 };
 
 export default useCreateCalendarMonths;
+
+function getDayCells({
+    monthIndex,
+    monthLength,
+    year,
+    firstWeekdayIndex,
+    previousMonthIndex,
+    previousMonthLength,
+    previousMonthYear,
+    nextMonthIndex,
+    nextMonthYear,
+}: {
+    monthIndex: number;
+    monthLength: number;
+    year: number;
+    firstWeekdayIndex: number;
+    previousMonthIndex: number;
+    previousMonthLength: number;
+    previousMonthYear: number;
+    nextMonthIndex: number;
+    nextMonthYear: number;
+}): DayCellData[] {
+    const cellsBeforeMonth = firstWeekdayIndex;
+    const cellsMonth = monthLength;
+    const cellsBeforeMonthPlusCellsMonths = cellsBeforeMonth + cellsMonth;
+    const cellsAfterMonth = (7 - (cellsBeforeMonthPlusCellsMonths % 7)) % 7;
+    const totalCells = cellsBeforeMonthPlusCellsMonths + cellsAfterMonth;
+
+    const cells = Array.from({ length: totalCells }).map((_, idx) => {
+        const monthPosition: DayCellData['monthPosition'] =
+            idx < cellsBeforeMonth ? 'previousMonth' : idx >= cellsBeforeMonthPlusCellsMonths ? 'nextMonth' : 'currentMonth';
+
+        let date, dateString;
+
+        switch (monthPosition) {
+            case 'previousMonth':
+                date = previousMonthLength - (cellsBeforeMonth - idx) + 1;
+                dateString = getDateString({ date, monthIndex: previousMonthIndex, year: previousMonthYear });
+                break;
+            case 'currentMonth':
+                date = idx - cellsBeforeMonth + 1;
+                dateString = getDateString({ date, monthIndex, year });
+
+                break;
+            case 'nextMonth':
+                date = idx - cellsBeforeMonthPlusCellsMonths + 1;
+                dateString = getDateString({ date, monthIndex: nextMonthIndex, year: nextMonthYear });
+
+                break;
+        }
+
+        return {
+            monthPosition,
+            date,
+            dateString,
+        };
+    });
+
+    return cells;
+}
