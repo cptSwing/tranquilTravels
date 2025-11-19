@@ -75,4 +75,26 @@ button:focus-visible {
     --text-2xs--line-height: 0.875rem;
     --text-3xs: 0.5rem;
     --text-3xs--line-height: 0.7rem;
+
+    --color-theme-background-header: var(--color-orange-700);
+    --color-theme-background: var(--color-white);
+    --color-theme-background-level-1: var(--color-neutral-200);
+    --color-theme-background-level-2: var(--color-neutral-50);
+    --color-theme-background-level-3: var(--color-neutral-100);
+    --color-theme-text-light: var(--color-white);
+    --color-theme-text-dark: var(--color-orange-950);
+
+    --transition-duration-theme: 300ms;
+}
+
+.level-1 {
+    @apply bg-theme-background-level-1 rounded-sm shadow-sm;
+}
+
+.level-2 {
+    @apply bg-theme-background-level-2 rounded-md shadow-md;
+}
+
+.level-3 {
+    @apply bg-theme-background-level-3 rounded-lg shadow-lg;
 }

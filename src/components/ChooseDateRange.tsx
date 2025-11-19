@@ -7,7 +7,7 @@ const ChooseDateRange = () => {
     const { from, to } = useZustandStore((store) => store.values.dateRange);
 
     return (
-        <div className="rounded-xs bg-neutral-300 p-2 shadow-lg">
+        <div className="bg-theme-background-level-2 rounded-xs p-2 shadow-lg">
             <h4>Pick Date Range</h4>
             <span>(max 11 months)</span>
             <div className="h-24 py-8">
