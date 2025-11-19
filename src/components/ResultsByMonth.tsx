@@ -1,14 +1,14 @@
 import { useZustandStore } from '../lib/zustandStore';
-import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
 import { MONTH_NAMES, WEEKDAY_NAMES } from '../types/consts';
-import { DateRange, MonthData } from '../types/types';
-import { getDateString, isInRange } from '../lib/handleDates';
+import { DayCellData, MonthData } from '../types/types';
+import { isInRange } from '../lib/handleDates';
 import { $api } from '../lib/api';
 import config from '../config/config.json';
 import useProcessHolidayResponse from '../hooks/useProcessHolidayResponse';
 import isDefined from '../lib/isDefined';
-import { classNames } from 'cpts-javascript-utilities';
+import { classNames, keyDownA11y } from 'cpts-javascript-utilities';
 import useCreateCalendarMonths from '../hooks/useCreateCalendarMonths';
+import { ReactNode } from 'react';
 
 const ResultsByMonth = () => {
     const selectedCountries = useZustandStore((store) => store.values.countries);
@@ -31,8 +31,8 @@ const ResultsByMonth = () => {
             enabled: isDefined(selectedCountries[0]),
         },
     );
-    const { blockedRanges, freeRanges } = useProcessHolidayResponse(data, from.dateString, to.dateString);
-    const calendarMonths = useCreateCalendarMonths({ from, to });
+    const { blockedRanges } = useProcessHolidayResponse(data);
+    const months = useCreateCalendarMonths({ from, to });
 
     if (error) {
         return (
@@ -46,18 +46,15 @@ const ResultsByMonth = () => {
         );
     }
     if (isLoading) return 'Loading...';
-    if (!blockedRanges || !freeRanges || !calendarMonths) return;
+    if (!months) return;
 
     return (
-        <div className="pointer-events-none grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {calendarMonths.map((calendarMonth, idx) => (
-                <SingleMonth
-                    key={from.dateString + to.dateString + idx}
-                    userRange={{ startDate: from.dateString, endDate: to.dateString }}
-                    blockedRanges={blockedRanges}
-                    freeRanges={freeRanges}
-                    calendarMonth={calendarMonth}
-                />
+        <div className="level-1 pointer-events-none grid w-full grid-cols-1 gap-4 px-4 pt-2 pb-3 [--calendar-grid-cell-height:--spacing(8)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {months.map((monthData, idx) => (
+                <CalendarMonth key={from.dateString + to.dateString + idx} monthData={monthData}>
+                    <CalendarDaysMarkRange cells={monthData.cells} startDateString={from.dateString} endDateString={to.dateString} />
+                    {blockedRanges && <CalendarDaysMarkSchoolHolidays cells={monthData.cells} ranges={blockedRanges} />}
+                </CalendarMonth>
             ))}
         </div>
     );
@@ -65,126 +62,148 @@ const ResultsByMonth = () => {
 
 export default ResultsByMonth;
 
-const SingleMonth = ({
-    userRange,
-    blockedRanges,
-    freeRanges,
-    calendarMonth,
-}: {
-    userRange: DateRange;
-    blockedRanges: DateRange[];
-    freeRanges: DateRange[];
-    calendarMonth: MonthData;
-}) => {
-    const { monthIndex, year, daysInMonth, daysInMonthBefore, firstWeekDay } = calendarMonth;
-
-    const dayCells = useMemo(() => {
-        const dayCells = Array.from({ length: daysInMonth }).map((_, idx) => (
-            <GridCell key={daysInMonth + idx} cellDate={idx + 1}>
-                {/* Blocked */}
-                <MarkRange calendarMonth={calendarMonth} ranges={blockedRanges} arrayIndex={idx} color="crimson" />
-                {/* Free */}
-                <MarkRange calendarMonth={calendarMonth} ranges={freeRanges} arrayIndex={idx} color="darkseagreen" />
-
-                <MarkUserRange calendarMonth={calendarMonth} userRange={userRange} arrayIndex={idx} />
-            </GridCell>
-        ));
-
-        // Add empty cells to display calendar dates at correct starting weekday:
-        dayCells.unshift(
-            ...Array.from({ length: firstWeekDay }).map((_, idx) => (
-                <GridCell key={firstWeekDay + idx} cellDate={daysInMonthBefore - firstWeekDay + idx + 1} isCurrentMonth={false} />
-            )),
-        );
-        dayCells.push(
-            ...Array.from({ length: (7 - ((daysInMonth + firstWeekDay) % 7)) % 7 }).map((_, idx) => (
-                <GridCell key={daysInMonth + firstWeekDay + idx} cellDate={idx + 1} isCurrentMonth={false} />
-            )),
-        );
-
-        return dayCells;
-    }, [daysInMonth, firstWeekDay, calendarMonth, blockedRanges, freeRanges, userRange, daysInMonthBefore]);
+const CalendarMonth = ({ monthData, children }: { monthData: MonthData; children: ReactNode }) => {
+    const { monthIndex, year, firstWeekdayIndex, cells } = monthData;
 
     return (
-        <div className="rounded-xs border border-white/20 bg-teal-400 p-2 text-center shadow-md">
-            {MONTH_NAMES[monthIndex]} {year}
-            <div className="row-auto grid grid-cols-7 border border-neutral-400 bg-neutral-50">
+        <div key={`${monthIndex}-${year}-${firstWeekdayIndex}`} className="text-left">
+            <span className="text-theme-text-dark pl-1.5">
+                {MONTH_NAMES[monthIndex]} {year}
+            </span>
+            <div className="level-2 overflow-hidden">
                 <WeekdayNames />
-                {dayCells.map((elem, idx) => (
-                    <Fragment key={idx}>{elem}</Fragment>
-                ))}
+                <div className="relative">
+                    <CalendarDays cells={cells} />
+                    {children}
+                </div>
             </div>
         </div>
     );
 };
 
-const GridCell = ({ children, cellDate, isCurrentMonth = true }: { children?: ReactNode; cellDate: number; isCurrentMonth?: boolean }) => {
+const CalendarDays = ({ cells }: { cells: DayCellData[] }) => (
+    <div className="grid grid-cols-7">
+        {cells.map(({ date, monthPosition, dateString }) => (
+            <div
+                key={dateString}
+                className={classNames(
+                    'relative flex h-(--calendar-grid-cell-height) w-(--calendar-grid-cell-width) flex-col items-center justify-center',
+                    'before:absolute before:top-0 before:left-0 before:z-10 before:box-border before:h-full before:w-full before:border-l before:border-neutral-200 nth-[7n+1]:before:border-l-0 nth-[n+8]:before:border-t',
+                    monthPosition === 'currentMonth' ? 'bg-white text-black' : 'bg-neutral-100 text-neutral-400',
+                )}
+            >
+                {date}
+            </div>
+        ))}
+    </div>
+);
+
+const CalendarDaysMarkRange = ({ cells, startDateString, endDateString }: { cells: DayCellData[]; startDateString: string; endDateString: string }) => (
+    <div className="absolute top-0 left-0 grid size-full grid-cols-7">
+        {cells.map(({ monthPosition, dateString }) => {
+            const positionInRange = getPositionInRange(dateString, startDateString, endDateString);
+
+            return (
+                <div
+                    key={dateString}
+                    className={classNames(
+                        'relative z-10 h-(--calendar-grid-cell-height) w-(--calendar-grid-cell-width)',
+                        monthPosition === 'currentMonth' ? 'after:absolute after:z-20' : 'after:content-none',
+                        positionInRange === 'first' || positionInRange === 'last'
+                            ? 'after:-top-[10%] after:left-1/2 after:aspect-square after:h-[120%] after:-translate-x-1/2 after:rounded-full after:border-2 after:border-yellow-300 after:bg-yellow-300/60'
+                            : 'after:content-none',
+                    )}
+                />
+            );
+        })}
+    </div>
+);
+
+const store_setRangeDescription = useZustandStore.getState().methods.store_setRangeDescription;
+
+const CalendarDaysMarkSchoolHolidays = ({
+    cells,
+    ranges,
+}: {
+    cells: DayCellData[];
+    ranges: {
+        description: string;
+        startDate: string;
+        endDate: string;
+    }[];
+}) => {
+    const rangeDescription = useZustandStore((store) => store.values.rangeDescription);
+
     return (
-        <div
-            key={cellDate}
-            className="relative z-0 flex h-8 flex-col items-center justify-center overflow-hidden pt-px before:absolute before:top-0 before:left-0 before:-z-10 before:size-full before:border-t before:border-l before:border-neutral-300/70 nth-[7n+1]:[--is-row-left-edge:1] nth-[7n-13]:before:border-l-0 nth-[7n-7]:[--is-row-right-edge:1]"
-        >
-            {children}
-            <div className={isCurrentMonth ? 'z-10 text-neutral-100 only-of-type:text-neutral-700' : 'text-neutral-200'}>{cellDate}</div>
+        <div className="absolute top-0 left-0 z-10 grid size-full grid-cols-7">
+            {cells.map(({ monthPosition, dateString }) => {
+                const range = ranges.find((r) => isInRange(dateString, r.startDate, r.endDate));
+                const positionInRange = range ? getPositionInRange(dateString, range.startDate, range.endDate) : undefined;
+                const isThisRangeDescription = rangeDescription === range?.description;
+
+                return (
+                    <div
+                        key={dateString}
+                        className="pointer-events-auto relative h-(--calendar-grid-cell-height) w-(--calendar-grid-cell-width) cursor-pointer [--is-row-left-edge:0] [--is-row-right-edge:0] nth-[7n+1]:[--is-row-left-edge:1] nth-[7n-7]:[--is-row-right-edge:1]"
+                        onClick={() => handleClick(range)}
+                        onKeyDown={() => handleClick(range)}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        {/* <div
+                            className={classNames(
+                                'duration-theme pointer-events-none absolute top-0 left-0 -z-10 size-full transition-[background-color]',
+                                isThisRangeDescription ? (monthPosition === 'currentMonth' ? 'bg-orange-300/80' : 'bg-orange-200/80') : 'bg-transparent',
+                            )}
+                        /> */}
+
+                        {range && positionInRange && (
+                            <div
+                                className={classNames(
+                                    'absolute top-1.5 right-[calc(--spacing(1)*var(--is-row-right-edge))] bottom-1.5 left-[calc(--spacing(1)*var(--is-row-left-edge))] rounded-l-[calc(4px*var(--is-row-left-edge))] rounded-r-[calc(4px*var(--is-row-right-edge))]',
+                                    monthPosition === 'currentMonth'
+                                        ? 'bg-red-500'
+                                        : 'box-border border-t border-r-[calc(1px*var(--is-row-right-edge))] border-b border-l-[calc(1px*var(--is-row-left-edge))] border-red-500/80',
+                                    positionInRange === 'first'
+                                        ? '[--is-row-left-edge:1]'
+                                        : positionInRange === 'last'
+                                          ? '[--is-row-right-edge:1]'
+                                          : positionInRange === 'single'
+                                            ? '[--is-row-left-edge:1] [--is-row-right-edge:1]'
+                                            : '',
+                                )}
+                            />
+                        )}
+                    </div>
+                );
+            })}
         </div>
     );
+
+    function handleClick(
+        range:
+            | {
+                  description: string;
+                  startDate: string;
+                  endDate: string;
+              }
+            | undefined,
+    ) {
+        store_setRangeDescription(range ? range.description : '');
+    }
 };
 
-const MarkUserRange = ({ calendarMonth, userRange, arrayIndex }: { calendarMonth: MonthData; userRange: DateRange; arrayIndex: number }) => {
-    const { monthIndex, year } = calendarMonth;
-    const thisDateString = getDateString({ date: arrayIndex + 1, monthIndex, year });
-    const inRange = isInRange(thisDateString, userRange.startDate, userRange.endDate);
+const WeekdayNames = () => (
+    <div className="grid grid-cols-7 bg-neutral-300">
+        {WEEKDAY_NAMES.map((weekDayName, idx) => (
+            <div key={weekDayName + idx} className="text-theme-text-light w-(--calendar-grid-cell-width) text-center">
+                {weekDayName}
+            </div>
+        ))}
+    </div>
+);
 
-    if (!inRange) return null;
-
-    const rangePosition = getRangePosition(thisDateString, userRange.startDate, userRange.endDate);
-
-    return (
-        <div
-            className={classNames(
-                'absolute -z-10 size-full bg-yellow-500/40',
-                rangePosition === 'first' ? 'rounded-tl-md' : rangePosition === 'last' ? 'rounded-br-md' : '',
-            )}
-        />
-    );
-};
-
-const MarkRange = ({ calendarMonth, ranges, arrayIndex, color }: { calendarMonth: MonthData; ranges: DateRange[]; arrayIndex: number; color: string }) => {
-    const { monthIndex, year } = calendarMonth;
-    const thisDateString = getDateString({ date: arrayIndex + 1, monthIndex, year });
-    const range = ranges.find((r) => isInRange(thisDateString, r.startDate, r.endDate));
-
-    if (!range) return null;
-
-    const rangePosition = getRangePosition(thisDateString, range.startDate, range.endDate);
-
-    return (
-        <div
-            className={classNames(
-                'pointer-events-auto absolute h-4/5 w-[calc(100%-var(--left-spacing,0px)/2-var(--right-spacing,0px)/2)] opacity-80',
-                '[--left-spacing:calc(--spacing(1.5)*var(--is-row-left-edge))] [--right-spacing:calc(--spacing(1.5)*var(--is-row-right-edge))]',
-                'mr-(--right-spacing) ml-(--left-spacing) rounded-l-[calc(var(--radius-sm)*var(--is-row-left-edge))] rounded-r-[calc(var(--radius-sm)*var(--is-row-right-edge))]',
-                'after:text-2xs after:absolute after:top-0 after:left-0 after:h-fit after:w-[500%] after:max-w-[50dvw] after:content-none hover:after:content-[attr(data-name)]',
-            )}
-            style={
-                {
-                    'backgroundColor': color,
-                    '--is-row-left-edge': rangePosition === 'single' || rangePosition === 'first' ? 1 : undefined,
-                    '--is-row-right-edge': rangePosition === 'single' || rangePosition === 'last' ? 1 : undefined,
-                } as CSSProperties
-            }
-            data-name={range.name?.[0].text}
-        />
-    );
-};
-
-const WeekdayNames = () =>
-    WEEKDAY_NAMES.map((weekDayName, idx) => (
-        <div key={weekDayName + idx} className="border-b border-neutral-400 bg-neutral-500 text-center text-neutral-100">
-            {weekDayName}
-        </div>
-    ));
-
-function getRangePosition(date: string, rangeStart: string, rangeEnd: string): 'first' | 'last' | 'middle' | 'single' {
+function getPositionInRange(date: string, rangeStart: string, rangeEnd: string): 'first' | 'last' | 'middle' | 'single' | undefined {
+    if (date < rangeStart || date > rangeEnd) return;
     return date === rangeStart && date === rangeEnd ? 'single' : date === rangeStart ? 'first' : date === rangeEnd ? 'last' : 'middle';
 }
