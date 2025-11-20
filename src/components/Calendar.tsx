@@ -10,7 +10,6 @@ import { classNames } from 'cpts-javascript-utilities';
 import useCreateCalendarMonths from '../hooks/useCreateCalendarMonths';
 import DisplayError from './DisplayError';
 
-const debug = false;
 const store_setRangeDescription = useZustandStore.getState().methods.store_setRangeDescription;
 
 const Calendar = () => {
@@ -46,7 +45,7 @@ const Calendar = () => {
     if (!monthsData) return;
 
     return (
-        <div className="level-1 pointer-events-none mb-4 grid w-full grid-cols-1 gap-4 px-3 pt-1.5 pb-2.5 [--calendar-grid-cell-height:--spacing(8)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="level-1 pointer-events-none mb-4 grid w-full grid-cols-1 gap-4 p-(--main-elements-padding) [--calendar-grid-cell-height:--spacing(8)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {monthsData?.map((monthData, idx) => (
                 <CalendarMonth
                     key={from.dateString + to.dateString + idx}
@@ -66,9 +65,9 @@ const CalendarMonth = ({ monthData, userRange, blockedRanges }: { monthData: Mon
 
     return (
         <div>
-            <span className="text-theme-cta-foreground mb-0.5 inline-block pl-1.5 text-left font-serif text-base">
+            <h5 className="text-theme-cta-foreground mb-1 inline-block pl-1.5 text-left font-serif leading-none">
                 {MONTH_NAMES[monthIndex]} {year}
-            </span>
+            </h5>
 
             <div className="level-2 grid grid-cols-7 overflow-hidden border border-neutral-400/50">
                 <WeekdayNames />
@@ -79,7 +78,7 @@ const CalendarMonth = ({ monthData, userRange, blockedRanges }: { monthData: Mon
                     // const isThisRangeDescription = rangeDescription === range?.name;
 
                     return (
-                        <DayCell
+                        <CalendarDay
                             key={cell.dateString}
                             dayCell={cell}
                             positionInUserRange={positionInUserRange}
@@ -88,24 +87,11 @@ const CalendarMonth = ({ monthData, userRange, blockedRanges }: { monthData: Mon
                     );
                 })}
             </div>
-
-            {debug && blockedRanges && (
-                <ol className="text-2xs">
-                    {blockedRanges.map(({ startDate, endDate, description }, idx) => (
-                        <ul key={startDate + endDate + description + idx} className="mt-2">
-                            <li>{description}:</li>
-                            <li>
-                                {startDate} - {endDate}
-                            </li>
-                        </ul>
-                    ))}
-                </ol>
-            )}
         </div>
     );
 };
 
-const DayCell = ({
+const CalendarDay = ({
     dayCell,
     positionInUserRange,
     positionInBlockedRange,
@@ -129,7 +115,7 @@ const DayCell = ({
             {/* Grid */}
             <div className="absolute top-0 left-0 box-content size-full border-t-[calc(theme(spacing.px)*var(--month-view-top-is-inner-horiz-edge))] border-l-[calc(theme(spacing.px)*(1-var(--month-view-has-outer-left-edge)))] border-neutral-100" />
 
-            {/* Blocked-Range Cell */}
+            {/* Blocked-Range Cell (School Holidays) */}
             {positionInBlockedRange && (
                 <div
                     className={classNames(
@@ -137,13 +123,13 @@ const DayCell = ({
                         monthPosition === 'currentMonth'
                             ? positionInUserRange
                                 ? positionInUserRange === 'first'
-                                    ? 'bg-linear-to-r from-red-100 to-red-400'
+                                    ? 'to-theme-blocked-range-active-holiday-school from-theme-blocked-range-inactive-holiday-school bg-linear-to-r'
                                     : positionInUserRange === 'last'
-                                      ? 'bg-linear-to-l from-red-100 to-red-400'
+                                      ? 'to-theme-blocked-range-active-holiday-school from-theme-blocked-range-inactive-holiday-school bg-linear-to-l'
                                       : // 'middle' or 'single'
-                                        'bg-red-400'
-                                : 'bg-red-100'
-                            : 'box-border border-t border-r-[calc(1px*var(--month-view-has-outer-right-edge))] border-b border-l-[calc(1px*var(--month-view-has-outer-left-edge))] border-red-300',
+                                        'bg-theme-blocked-range-active-holiday-school'
+                                : 'bg-theme-blocked-range-inactive-holiday-school'
+                            : 'border-theme-blocked-range-inactive-holiday-school box-border border-t border-r-[calc(1px*var(--month-view-has-outer-right-edge))] border-b border-l-[calc(1px*var(--month-view-has-outer-left-edge))]',
                         positionInBlockedRange === 'first'
                             ? '[--month-view-has-outer-left-edge:1]'
                             : positionInBlockedRange === 'last'
@@ -170,7 +156,7 @@ const DayCell = ({
                     'z-20 font-light',
                     monthPosition === 'currentMonth'
                         ? isOutsideUserRangeInsideBlockedRange
-                            ? 'text-red-300'
+                            ? 'text-theme-blocked-range-active-holiday-school'
                             : isAtUserRangeExtents
                               ? 'text-theme-cta-foreground text-base! font-normal!'
                               : positionInBlockedRange

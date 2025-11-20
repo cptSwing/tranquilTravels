@@ -7,7 +7,7 @@ import { useZustandStore } from '../lib/zustandStore';
 import DisplayError from './DisplayError';
 import DisplayLoading from './DisplayLoading';
 
-const DebugHolidayView = () => {
+const Debug = () => {
     const selectedCountries = useZustandStore((store) => store.values.countries);
     const { from, to } = useZustandStore((store) => store.values.dateRange);
 
@@ -53,7 +53,22 @@ const DebugHolidayView = () => {
     );
 };
 
-export default DebugHolidayView;
+export default Debug;
+
+/*
+    {debug && blockedRanges && (
+                <ol className="text-2xs">
+                    {blockedRanges.map(({ startDate, endDate, description }, idx) => (
+                        <ul key={startDate + endDate + description + idx} className="mt-2">
+                            <li>{description}:</li>
+                            <li>
+                                {startDate} - {endDate}
+                            </li>
+                        </ul>
+                    ))}
+                </ol>
+            )}
+*/
 
 const HolidayList = ({ holiday }: { holiday: components['schemas']['HolidayResponse'] }) => {
     const { name, startDate, endDate, type, regionalScope, subdivisions, groups } = holiday;

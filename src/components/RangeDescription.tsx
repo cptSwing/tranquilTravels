@@ -4,7 +4,7 @@ const RangeDescription = () => {
     const rangeDescription = useZustandStore((store) => store.values.rangeDescription);
 
     return (
-        <div className="level-1 duration-theme flex w-full items-start justify-start p-2">
+        <div className="level-1 duration-theme flex w-full items-start justify-start p-(--main-elements-padding)">
             <input id="checkbox-range" type="checkbox" className="peer size-0" />
             <label
                 htmlFor="checkbox-range"

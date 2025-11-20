@@ -1,15 +1,36 @@
 @import 'tailwindcss';
 /* @plugin 'tailwindcss-breakpoints-inspector'; */
 
+@theme {
+    --text-2xs: 0.625rem;
+    --text-2xs--line-height: 0.875rem;
+    --text-3xs: 0.5rem;
+    --text-3xs--line-height: 0.7rem;
+
+    --color-theme-background: var(--color-white);
+    --color-theme-background-level-1: var(--color-neutral-200);
+    --color-theme-background-level-2: var(--color-neutral-50);
+    --color-theme-background-level-3: var(--color-neutral-100);
+
+    --color-theme-text-light: var(--color-white);
+    --color-theme-text-dark: var(--color-orange-950);
+
+    --color-theme-accent: var(--color-emerald-700);
+    --color-theme-cta-background: var(--color-emerald-300);
+    --color-theme-cta-foreground: var(--color-rose-700);
+
+    --color-theme-blocked-range-active-holiday-school: var(--color-red-400);
+    --color-theme-blocked-range-inactive-holiday-school: var(--color-red-100);
+    --color-theme-blocked-range-active-holiday-public: var(--color-cyan-400);
+    --color-theme-blocked-range-inactive-holiday-public: var(--color-cyan-100);
+
+    --transition-duration-theme: 300ms;
+
+    --inset-shadow-nondirectional-sm: inset 0px 0px 2px 0px var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
+}
+
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-
+    @apply bg-theme-background h-dvh w-dvw overflow-x-hidden text-sm [--content-width:90%] [--header-height:--spacing(20)] md:[--content-width:80%] xl:[--content-width:70%];
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -17,78 +38,46 @@
 }
 
 a {
-    font-weight: 500;
-    color: #646cff;
-    text-decoration: inherit;
-}
-a:hover {
-    color: #535bf2;
+    @apply text-emerald-800 underline-offset-2 visited:text-emerald-950 hover:text-emerald-600 hover:underline;
 }
 
-body {
-    margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
+header a {
+    @apply hover:text-theme-cta-background text-neutral-100 visited:text-neutral-100;
 }
 
 h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
+    @apply text-4xl;
 }
 
-button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-}
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+h2 {
+    @apply text-3xl;
 }
 
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
+h3 {
+    @apply text-2xl;
 }
 
-@theme {
-    --text-2xs: 0.625rem;
-    --text-2xs--line-height: 0.875rem;
-    --text-3xs: 0.5rem;
-    --text-3xs--line-height: 0.7rem;
+h4 {
+    @apply text-xl;
+}
 
-    --color-theme-accent: var(--color-emerald-700);
-    --color-theme-background: var(--color-white);
-    --color-theme-background-level-1: var(--color-neutral-200);
-    --color-theme-background-level-2: var(--color-neutral-50);
-    --color-theme-background-level-3: var(--color-neutral-100);
-    --color-theme-text-light: var(--color-white);
-    --color-theme-text-dark: var(--color-orange-950);
-    --color-theme-cta-background: var(--color-emerald-300);
-    --color-theme-cta-foreground: var(--color-rose-700);
+h5 {
+    @apply text-lg;
+}
 
-    --transition-duration-theme: 300ms;
+h6 {
+    @apply text-base;
+}
 
-    --inset-shadow-nondirectional-sm: inset 0px 0px 2px 0px var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
+label {
+    @apply text-xs;
+} 
+ 
+
+/* Calender icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply text-lg invert;
+ 
 }
 
 .level-1 {
