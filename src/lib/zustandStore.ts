@@ -15,9 +15,15 @@ export const useZustandStore = create<ZustandStore>()(
         },
 
         methods: {
-            store_setCountries(countries) {
+            store_setCountriesCapped(countries) {
+                let cappedCountries = countries;
+
+                if (countries.length > config.countrySelectionMax) {
+                    cappedCountries = countries.slice(0, config.countrySelectionMax);
+                }
+
                 set((draftStore) => {
-                    draftStore.values.countries = countries;
+                    draftStore.values.countries = cappedCountries;
                 });
             },
 

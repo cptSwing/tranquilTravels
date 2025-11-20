@@ -3,12 +3,14 @@ import { MONTH_NAMES, WEEKDAY_NAMES } from '../types/consts';
 import { DateRange, DayCellData, MonthData } from '../types/types';
 import { isInRange } from '../lib/handleDates';
 import { $api } from '../lib/api';
+import { useQueries } from '@tanstack/react-query';
 import config from '../config/config.json';
 import useProcessHolidayResponse from '../hooks/useProcessHolidayResponse';
 import isDefined from '../lib/isDefined';
 import { classNames } from 'cpts-javascript-utilities';
 import useCreateCalendarMonths from '../hooks/useCreateCalendarMonths';
 import DisplayError from './DisplayError';
+import DisplayLoading from './DisplayLoading';
 
 const store_setRangeDescription = useZustandStore.getState().methods.store_setRangeDescription;
 
@@ -16,36 +18,37 @@ const Calendar = () => {
     const selectedCountries = useZustandStore((store) => store.values.countries);
     const { from, to } = useZustandStore((store) => store.values.dateRange);
 
-    const {
-        data,
-        error,
-        isLoading: _isLoading,
-    } = $api.useQuery(
-        'get',
-        '/SchoolHolidays',
-        {
-            params: {
-                query: {
-                    countryIsoCode: selectedCountries[0],
-                    validFrom: from.dateString, // TODO should be from beginning of month (or rather, beginning of calenderview)
-                    validTo: to.dateString, // TODO should be to end of month (or rather, end of calenderview)
-                    languageIsoCode: config.language,
+    const combinedResponse = useQueries({
+        queries: selectedCountries.map((countryItem) =>
+            $api.queryOptions('get', '/SchoolHolidays', {
+                params: {
+                    query: {
+                        countryIsoCode: countryItem.value,
+                        validFrom: from.dateString, // TODO should be from beginning of month (or rather, beginning of calenderview)
+                        validTo: to.dateString, // TODO should be to end of month (or rather, end of calenderview)
+                        languageIsoCode: config.language,
+                    },
                 },
-            },
+            }),
+        ),
+        combine: (results) => {
+            return {
+                data: results.map((result) => result.data).filter(isDefined),
+                pending: results.some((result) => result.isPending),
+                error: results.map((result) => result.error).filter(isDefined),
+            };
         },
-        {
-            enabled: isDefined(selectedCountries[0]),
-        },
-    );
-    const { blockedRanges } = useProcessHolidayResponse(data);
+    });
+
+    const { blockedRanges } = useProcessHolidayResponse(combinedResponse.data);
     const monthsData = useCreateCalendarMonths({ from, to });
 
-    if (error) return <DisplayError error={error} />;
-    // if (isLoading) return <DisplayLoading />;
+    if (combinedResponse.error.length) return <DisplayError error={combinedResponse.error[0]} />;
+    if (combinedResponse.pending) return <DisplayLoading />;
     if (!monthsData) return;
 
     return (
-        <div className="level-1 pointer-events-none mb-4 grid w-full grid-cols-1 gap-4 p-(--main-elements-padding) [--calendar-grid-cell-height:--spacing(8)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="level-1 pointer-events-none z-0 mb-4 grid w-full grid-cols-1 gap-4 p-(--main-elements-padding) [--calendar-grid-cell-height:--spacing(8)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {monthsData?.map((monthData, idx) => (
                 <CalendarMonth
                     key={from.dateString + to.dateString + idx}
@@ -64,7 +67,7 @@ const CalendarMonth = ({ monthData, userRange, blockedRanges }: { monthData: Mon
     const { monthIndex, year, cells } = monthData;
 
     return (
-        <div>
+        <div className="">
             <h5 className="text-theme-cta-foreground mb-1 inline-block pl-1.5 text-left font-serif leading-none">
                 {MONTH_NAMES[monthIndex]} {year}
             </h5>
@@ -153,7 +156,7 @@ const CalendarDay = ({
 
             <span
                 className={classNames(
-                    'z-20 font-light',
+                    'z-10 font-light',
                     monthPosition === 'currentMonth'
                         ? isOutsideUserRangeInsideBlockedRange
                             ? 'text-theme-blocked-range-active-holiday-school'

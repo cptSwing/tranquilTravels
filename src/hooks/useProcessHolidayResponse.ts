@@ -2,11 +2,13 @@ import { useMemo } from 'react';
 import { components } from '../types/openHolidaysSchema';
 import { DateRange } from '../types/types';
 import { splitDateString } from '../lib/handleDates';
+import isDefined from '../lib/isDefined';
 
-const useProcessHolidayResponse = (holidaysResponse: components['schemas']['HolidayResponse'][] | undefined) => {
+const useProcessHolidayResponse = (holidaysResponse: components['schemas']['HolidayResponse'][][]) => {
     const timeRanges_Memo = useMemo(() => {
-        if (holidaysResponse) {
-            const sortedHolidays = [...holidaysResponse].sort((a, b) => a.startDate.localeCompare(b.startDate));
+        if (holidaysResponse.length) {
+            const flattened = holidaysResponse.flat().filter(isDefined);
+            const sortedHolidays = flattened.sort((a, b) => a.startDate.localeCompare(b.startDate));
             const mergedRanges: DateRangeTemporaryWorkingType[] = [];
             const holidayNamesCache = new Map<string, HolidayGroupsAndSubdivisions>();
 
