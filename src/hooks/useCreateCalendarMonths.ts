@@ -1,10 +1,12 @@
-import { useMemo } from 'react';
-import { getDateString, getDaysInMonth, getFirstWeekdayIndex, wrapYear } from '../lib/handleDates';
+import { useMemo, useRef } from 'react';
+import { createDateString, getDaysInMonth, getFirstWeekdayIndex, wrapYear } from '../lib/handleDates';
 import { wrapNumber } from '../lib/modulo';
 import { DateRangePoint, DayCellData, MonthData } from '../types/types';
 
 const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRangePoint }) => {
-    const monthsData: MonthData[] | undefined = useMemo(() => {
+    const monthCacheRef = useRef<Map<string, MonthDataTemporaryWorkingType>>(new Map());
+
+    const monthsData_Memo: MonthData[] | undefined = useMemo(() => {
         if (dateRange) {
             const { from, to } = dateRange;
 
@@ -15,14 +17,22 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
             const indexOfMonthBeforeRange = wrapNumber(from.monthIndex - 1, 12);
             const yearOfMonthBeforeRange = wrapYear(from.monthIndex, from.year, indexOfMonthBeforeRange, 'backward');
 
-            const months: MonthData[] = [];
+            const monthsData: MonthDataTemporaryWorkingType[] = [];
 
             for (let i = 0; i < monthsDifference + 1; i++) {
-                const previousMonthElement = months[i - 1];
+                const previousMonthElement = monthsData[i - 1];
 
-                const monthStep = wrapNumber(from.monthIndex + i, 12);
-                const yearStep = wrapYear(from.monthIndex, from.year, monthStep, 'forward');
-                const monthLength = getDaysInMonth(monthStep, yearStep);
+                const monthIndexIncr = wrapNumber(from.monthIndex + i, 12);
+                const yearIncr = wrapYear(from.monthIndex, from.year, monthIndexIncr, 'forward');
+                const monthCacheKey = `${yearIncr}-${monthIndexIncr + 1}`;
+
+                // retrieve previously created month data from cache
+                if (monthCacheRef.current.has(monthCacheKey)) {
+                    monthsData.push(monthCacheRef.current.get(monthCacheKey)!);
+                    continue;
+                }
+
+                const monthLength = getDaysInMonth(monthIndexIncr, yearIncr);
 
                 let monthIndex, year, firstWeekdayIndex, previousMonthIndex, previousMonthLength, previousMonthYear;
 
@@ -44,14 +54,15 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
                     previousMonthYear = previousMonthElement.year;
                 } else {
                     // in-between
-                    monthIndex = monthStep;
-                    year = yearStep;
-                    firstWeekdayIndex = wrapNumber(previousMonthElement.firstWeekdayIndex + previousMonthElement.monthLength, 7);
+                    monthIndex = monthIndexIncr;
+                    year = yearIncr;
+                    firstWeekdayIndex = wrapNumber(previousMonthElement.firstWeekdayIndex + previousMonthElement.monthLength, 7); // avoid further Date() object creation
                     previousMonthIndex = previousMonthElement.monthIndex;
                     previousMonthLength = previousMonthElement.monthLength;
                     previousMonthYear = previousMonthElement.year;
                 }
 
+                // create grid cells for month display ('30, 31, 1, 2, ..., 31, 1, 2, 3)
                 const cells = getDayCells({
                     monthIndex,
                     monthLength,
@@ -64,20 +75,23 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
                     firstWeekdayIndex,
                 });
 
-                months.push({
-                    monthIndex,
-                    year,
-                    monthLength,
+                const monthData: MonthDataTemporaryWorkingType = {
                     firstWeekdayIndex,
+                    monthIndex,
+                    monthLength,
+                    year,
                     cells,
-                });
+                };
+
+                monthsData.push(monthData);
+                monthCacheRef.current.set(monthCacheKey, monthData);
             }
 
-            return months;
+            return monthsData.map(({ year, monthIndex, cells }) => ({ year, monthIndex, cells })) as MonthData[];
         }
     }, [dateRange]);
 
-    return monthsData;
+    return monthsData_Memo;
 };
 
 export default useCreateCalendarMonths;
@@ -118,16 +132,16 @@ function getDayCells({
         switch (monthPosition) {
             case 'previousMonth':
                 date = previousMonthLength - (cellsBeforeMonth - idx) + 1;
-                dateString = getDateString({ date, monthIndex: previousMonthIndex, year: previousMonthYear });
+                dateString = createDateString({ date, monthIndex: previousMonthIndex, year: previousMonthYear });
                 break;
             case 'currentMonth':
                 date = idx - cellsBeforeMonth + 1;
-                dateString = getDateString({ date, monthIndex, year });
+                dateString = createDateString({ date, monthIndex, year });
 
                 break;
             case 'nextMonth':
                 date = idx - cellsBeforeMonthPlusCellsMonths + 1;
-                dateString = getDateString({ date, monthIndex: nextMonthIndex, year: nextMonthYear });
+                dateString = createDateString({ date, monthIndex: nextMonthIndex, year: nextMonthYear });
 
                 break;
         }
@@ -141,3 +155,8 @@ function getDayCells({
 
     return cells;
 }
+
+type MonthDataTemporaryWorkingType = MonthData & {
+    monthLength: number;
+    firstWeekdayIndex: number;
+};

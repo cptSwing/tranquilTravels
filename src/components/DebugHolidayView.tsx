@@ -4,6 +4,8 @@ import { $api } from '../lib/api';
 import config from '../config/config.json';
 import isDefined from '../lib/isDefined';
 import { useZustandStore } from '../lib/zustandStore';
+import DisplayError from './DisplayError';
+import DisplayLoading from './DisplayLoading';
 
 const DebugHolidayView = () => {
     const selectedCountries = useZustandStore((store) => store.values.countries);
@@ -28,18 +30,8 @@ const DebugHolidayView = () => {
     );
     const { blockedRanges, freeRanges } = useProcessHolidayResponse(data, from.dateString, to.dateString);
 
-    if (error) {
-        return (
-            <>
-                An error occured (Status {error.status}): {error.title}
-                <br />
-                {JSON.stringify(error.detail)}
-                <br />
-                {JSON.stringify(error.errors)}
-            </>
-        );
-    }
-    if (isLoading) return 'Loading...';
+    if (error) return <DisplayError error={error} />;
+    if (isLoading) return <DisplayLoading />;
     if (!blockedRanges || !freeRanges) return;
 
     return (
