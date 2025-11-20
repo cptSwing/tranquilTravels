@@ -30,11 +30,21 @@
 }
 
 :root {
-    @apply bg-theme-background h-dvh w-dvw overflow-x-hidden text-sm [--content-width:90%] [--header-height:--spacing(20)] md:[--content-width:80%] xl:[--content-width:70%];
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    @apply bg-theme-background h-dvh w-dvw overflow-x-hidden text-sm [--content-width:90%] [--header-height:--spacing(20)] md:[--content-width:80%] xl:[--content-width:70%];
+
+    /* Fix headlessui bug: https://github.com/tailwindlabs/headlessui/issues/762  */
+    @apply overflow-y-auto! pr-0!;
+}
+
+body {
+    scrollbar-gutter: stable both-edges;
 }
 
 a {
@@ -71,13 +81,21 @@ h6 {
 
 label {
     @apply text-xs;
-} 
- 
+}
 
-/* Calender icon */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    @apply text-lg invert;
- 
+/* Calender icon coloring in firefox */
+input[type='date'] {
+    @apply accent-theme-cta-foreground text-lg;
+}
+
+/* Calender icon coloring in chrome, using https://codepen.io/sosuke/pen/Pjoqqp */
+input[type='date']::-webkit-calendar-picker-indicator {
+    @apply text-lg;
+    filter: invert(14%) sepia(61%) saturate(6015%) hue-rotate(337deg) brightness(82%) contrast(94%);
+}
+
+#headlessui-portal-root {
+    @apply z-1000 h-[500%] overflow-y-scroll;
 }
 
 .level-1 {

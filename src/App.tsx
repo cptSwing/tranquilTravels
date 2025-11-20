@@ -8,22 +8,20 @@ import Debug from './components/Debug';
 import config from './config/config.json';
 
 const App = () => (
-    <div className="">
-        <QueryClientProvider client={queryClientTanstack}>
-            <Header />
+    <QueryClientProvider client={queryClientTanstack}>
+        <Header />
 
-            <main className="mx-auto flex w-(--content-width) flex-col items-center justify-start gap-y-2 py-2 [--main-elements-padding:--spacing(3)]">
-                <Options />
-                <RangeDescription />
-                <Calendar />
+        <main className="mx-auto flex w-(--content-width) flex-col items-center justify-start gap-y-2 py-2 [--main-elements-padding:--spacing(3)]">
+            <Options />
+            <RangeDescription />
+            <Calendar />
 
-                {config.debug && (
-                    <div className="bg-neutral-500 p-2">
-                        <Debug />
-                    </div>
-                )}
-            </main>
-        </QueryClientProvider>
-    </div>
+            {config.debug && (
+                <div className="bg-neutral-500 p-2">
+                    <Debug />
+                </div>
+            )}
+        </main>
+    </QueryClientProvider>
 );
 export default App;

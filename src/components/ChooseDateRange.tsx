@@ -20,7 +20,7 @@ const ChooseDateRange = () => {
                     </label>
                     <input
                         id="input-date-from"
-                        className="bg-theme-cta-background text-theme-cta-foreground w-full rounded-sm px-1 invalid:bg-red-800"
+                        className="bg-theme-cta-background text-theme-cta-foreground w-full rounded-sm px-(--input-element-padding) invalid:bg-red-800"
                         type="date"
                         value={from.dateString}
                         max={to.dateString} // TODO to minus one day, and max 11 months in total
@@ -40,7 +40,7 @@ const ChooseDateRange = () => {
                     </label>
                     <input
                         id="input-date-to"
-                        className="bg-theme-cta-background text-theme-cta-foreground w-full rounded-sm px-1 invalid:bg-red-800"
+                        className="bg-theme-cta-background text-theme-cta-foreground w-full rounded-sm px-(--input-element-padding) invalid:bg-red-800"
                         type="date"
                         value={to.dateString}
                         min={from.dateString} // TODO from plus one day, and max 11 months in total
