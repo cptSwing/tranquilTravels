@@ -41,6 +41,7 @@ export default defineConfig(
         rules: {
             'react-hooks/rules-of-hooks': 'warn',
             'react-hooks/exhaustive-deps': 'warn',
+            'react-hooks/refs': 'off', // https://github.com/facebook/react/issues/34775
 
             'object-shorthand': 'warn',
             'no-console': 'warn',
