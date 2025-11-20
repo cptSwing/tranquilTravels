@@ -13,7 +13,7 @@ const RangeDescription = () => {
                 &gt;
             </label>
 
-            <div className="duration-theme text-theme-text-dark h-6 w-full overflow-hidden text-sm text-ellipsis transition-[height] peer-checked:h-24">
+            <div className="duration-theme text-theme-text-dark h-6 w-full overflow-hidden text-ellipsis transition-[height] peer-checked:h-24">
                 {rangeDescription}
             </div>
         </div>

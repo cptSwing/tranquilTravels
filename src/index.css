@@ -76,15 +76,19 @@ button:focus-visible {
     --text-3xs: 0.5rem;
     --text-3xs--line-height: 0.7rem;
 
-    --color-theme-background-header: var(--color-orange-700);
+    --color-theme-accent: var(--color-emerald-700);
     --color-theme-background: var(--color-white);
     --color-theme-background-level-1: var(--color-neutral-200);
     --color-theme-background-level-2: var(--color-neutral-50);
     --color-theme-background-level-3: var(--color-neutral-100);
     --color-theme-text-light: var(--color-white);
     --color-theme-text-dark: var(--color-orange-950);
+    --color-theme-cta-background: var(--color-emerald-300);
+    --color-theme-cta-foreground: var(--color-rose-700);
 
     --transition-duration-theme: 300ms;
+
+    --inset-shadow-nondirectional-sm: inset 0px 0px 2px 0px var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
 }
 
 .level-1 {

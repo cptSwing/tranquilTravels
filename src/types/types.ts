@@ -23,9 +23,9 @@ export type DateRangePoint = {
     dateString: string;
 };
 
-export type MonthData = Omit<DateRangePoint, 'date' | 'dateString'> & {
-    monthLength: number;
-    firstWeekdayIndex: number;
+export type MonthData = Pick<DateRangePoint, 'year' | 'monthIndex'> & {
+    year: number;
+    monthIndex: number;
     cells: DayCellData[];
 };
 
@@ -34,5 +34,5 @@ export type DayCellData = { date: number; monthPosition: 'previousMonth' | 'curr
 export type DateRange = {
     startDate: string;
     endDate: string;
-    name?: components['schemas']['HolidayResponse']['name'];
+    description?: string;
 };
