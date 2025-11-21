@@ -32,25 +32,28 @@ const ChooseCountries = () => {
     if (isLoading) return <DisplayLoading />;
 
     return (
-        <div className="level-2 basis-2/5 p-(--options-elements-padding)">
-            <h6 className="text-theme-cta-foreground block text-left font-serif leading-none">3. Choose Countries:</h6>
+        <div className="level-2 flex basis-2/4 flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
+            <div>
+                <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">3. Choose Countries:</h6>
+                <p className="text-left text-xs">Pick the countries you&apos;d want to avoid (the bigger, the better obviously?)</p>
+            </div>
 
-            <div className="flex h-[calc(100%-(var(--options-elements-padding)*2))] flex-col items-end justify-between gap-3 md:flex-row md:gap-4">
+            <div className="flex w-full flex-col items-start justify-between gap-3 md:gap-4 lg:flex-row lg:items-end">
                 {listCountries && (
                     <ComboboxDropdown
                         items={listCountries}
                         selectedItems={selectedCountries}
                         label="Assignees"
-                        description="bla bla bla description"
+                        // description="bla bla bla description"
                         onChangeCb={(selectedValues) => {
                             store_setRangeDescription('');
                             store_setCountriesCapped(selectedValues);
                         }}
-                        extraClassNames=" shrink-0 basis-2/5"
+                        extraClassNames="shrink-0 lg:basis-1/3  "
                     />
                 )}
 
-                <CountryPills selectedCountries={selectedCountries} extraClassNames="basis-3/5" />
+                <CountryPills selectedCountries={selectedCountries} extraClassNames="lg:basis-2/3 " />
             </div>
         </div>
     );
@@ -63,7 +66,7 @@ const CountryPills = ({ selectedCountries, extraClassNames }: { selectedCountrie
     return (
         <div className={extraClassNames}>
             <span className="pl-px text-xs">Current Picks:</span>
-            <ul className="flex flex-col flex-wrap gap-1.5 lg:flex-row">
+            <ul className="flex flex-row flex-wrap gap-1.5 md:flex-col lg:flex-row">
                 {selectedCountries.map((country) => {
                     return (
                         <li

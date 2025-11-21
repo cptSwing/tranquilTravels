@@ -1,9 +1,12 @@
 const ChooseHolidayType = () => {
     return (
-        <div className="level-2 flex-1 p-(--options-elements-padding)">
-            <h6 className="text-theme-cta-foreground text-left font-serif leading-none">2. Choose Holiday Type:</h6>
+        <div className="level-2 flex basis-auto flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
+            <div>
+                <h6 className="text-theme-cta-foreground mb-0.5 text-left font-serif leading-tight">2. Choose Holiday Type:</h6>
+                <p className="text-left text-xs">View school holidays, public holidays, or both.</p>
+            </div>
 
-            <div className="flex h-[calc(100%-(var(--options-elements-padding)*2))] flex-col items-end justify-between gap-3 md:flex-row md:gap-4">
+            <div className="flex w-full flex-row items-end justify-between gap-3 md:gap-4">
                 <div className="flex basis-1/2 flex-row items-center justify-start gap-1.5">
                     <input id="select-holiday-type-school" type="checkbox" value="school" checked />
                     <label htmlFor="select-holiday-type-school" className="">
