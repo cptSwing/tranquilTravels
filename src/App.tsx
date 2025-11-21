@@ -37,6 +37,7 @@ const Todo = () => {
             <ul className="grid grid-cols-2 gap-x-2 gap-y-0.5 pl-5 text-xs">
                 <li className="list-disc">Fix dropdown (&quot;Choose Countries&quot;) only working after 1,2 clicks</li>
                 <li className="list-disc">Make &quot;Choose Holiday Type&quot; actually do anything</li>
+                <li className="list-disc">Cursor-pointer; Text fixes (&apos;Assignees&apos; etc)</li>
                 <li className="list-disc">Fix Option&apos;s elements not growing on large desktop sizes</li>
                 <li className="list-disc">Add England, Russia, US, Canada (find another API, fun)</li>
                 <li className="list-disc">Finish up &apos;thank-you&apos; list</li>
