@@ -9,65 +9,80 @@ const useProcessHolidayResponse = (holidaysResponse: components['schemas']['Holi
         if (holidaysResponse.length) {
             const flattened = holidaysResponse.flat().filter(isDefined);
             const sortedHolidays = flattened.sort((a, b) => a.startDate.localeCompare(b.startDate));
-            const mergedRanges: DateRangeTemporaryWorkingType[] = [];
+
             const holidayNamesCache = new Map<string, HolidayGroupsAndSubdivisions>();
+            const mergedRanges: DateRangeTemporaryWorkingType[] = [];
 
             for (let i = 0; i < sortedHolidays.length; i++) {
                 const currentHoliday = sortedHolidays[i];
                 const currentHolidayName = currentHoliday.name[0].text;
 
-                // TODO Accurate name per cell, not per Range
-                const currentGroupShortName = currentHoliday.groups?.[0].shortName; // Language groups etc
-                const currentSubdivisionShortName = currentHoliday.subdivisions?.[0].shortName; // States, Provinces etc
+                // var from = new Date(2012,0,1);
+                // const to = new Date(2012, 1, 20);
+                // const from = new Date(splitDateString(currentRange.startDate));
 
-                const newHolidayGroupsSubdivisions: HolidayGroupsAndSubdivisions = { groups: new Set(), subdivisions: new Set() };
+                const from = currentHoliday.startDate;
+                const to = new Date(currentHoliday.endDate);
 
-                if (currentGroupShortName) newHolidayGroupsSubdivisions.groups.add(currentGroupShortName);
-                if (currentSubdivisionShortName) newHolidayGroupsSubdivisions.subdivisions.add(currentSubdivisionShortName);
-
-                if (holidayNamesCache.has(currentHolidayName)) {
-                    const cachedHolidayGroupsSubdivisions = holidayNamesCache.get(currentHolidayName)!;
-                    newHolidayGroupsSubdivisions.groups = newHolidayGroupsSubdivisions.groups.union(cachedHolidayGroupsSubdivisions.groups);
-                    newHolidayGroupsSubdivisions.subdivisions = newHolidayGroupsSubdivisions.subdivisions.union(cachedHolidayGroupsSubdivisions.subdivisions);
+                // loop for every day
+                for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
+                    // your day is here
+                    console.log(
+                        '%c[useProcessHolidayResponse]',
+                        'color: #ff36d8',
+                        `${currentHolidayName} --> ${currentHoliday.startDate} - ${to.toLocaleDateString('en-CA')} :`,
+                        day.toLocaleDateString('en-CA'),
+                    );
                 }
 
-                holidayNamesCache.set(currentHolidayName, newHolidayGroupsSubdivisions);
+                // TODO Accurate name per cell, not per Range
+                const currentGroupName = currentHoliday.groups?.[0].shortName; // Language groups etc
+                const currentSubdivisionName = currentHoliday.subdivisions?.[0].shortName; // States, Provinces etc
 
-                const currentHolidayRange: DateRangeTemporaryWorkingType = {
+                const newGroupsSubdivisions: HolidayGroupsAndSubdivisions = { groups: new Set(), subdivisions: new Set() };
+
+                if (currentGroupName) newGroupsSubdivisions.groups.add(currentGroupName);
+                if (currentSubdivisionName) newGroupsSubdivisions.subdivisions.add(currentSubdivisionName);
+
+                if (holidayNamesCache.has(currentHolidayName)) {
+                    const cachedGroupsSubdivisions = holidayNamesCache.get(currentHolidayName)!;
+                    newGroupsSubdivisions.groups = newGroupsSubdivisions.groups.union(cachedGroupsSubdivisions.groups);
+                    newGroupsSubdivisions.subdivisions = newGroupsSubdivisions.subdivisions.union(cachedGroupsSubdivisions.subdivisions);
+                }
+
+                holidayNamesCache.set(currentHolidayName, newGroupsSubdivisions);
+
+                const currentRange: DateRangeTemporaryWorkingType = {
                     startDate: currentHoliday.startDate,
                     endDate: currentHoliday.endDate,
                     holidayNames: new Set([currentHolidayName]),
-                    groups: newHolidayGroupsSubdivisions.groups,
-                    subdivisions: newHolidayGroupsSubdivisions.subdivisions,
+                    groups: newGroupsSubdivisions.groups,
+                    subdivisions: newGroupsSubdivisions.subdivisions,
                 };
 
-                currentHolidayRange.description = createDescription(
-                    currentHolidayRange.holidayNames!,
-                    currentHolidayRange.groups!,
-                    currentHolidayRange.subdivisions!,
-                );
+                currentRange.description = createDescription(currentRange.holidayNames!, currentRange.groups!, currentRange.subdivisions!);
 
                 if (mergedRanges.length === 0) {
-                    mergedRanges.push(currentHolidayRange);
+                    mergedRanges.push(currentRange);
                     continue;
                 }
 
                 const lastRange = mergedRanges[mergedRanges.length - 1];
 
-                if (currentHolidayRange.startDate <= lastRange.endDate) {
+                if (currentRange.startDate <= lastRange.endDate) {
                     lastRange.holidayNames!.add(currentHolidayName);
-                    lastRange.groups = lastRange.groups!.union(newHolidayGroupsSubdivisions.groups);
-                    lastRange.subdivisions = lastRange.subdivisions!.union(newHolidayGroupsSubdivisions.subdivisions);
+                    lastRange.groups = lastRange.groups!.union(newGroupsSubdivisions.groups);
+                    lastRange.subdivisions = lastRange.subdivisions!.union(newGroupsSubdivisions.subdivisions);
 
                     lastRange.description = createDescription(lastRange.holidayNames!, lastRange.groups!, lastRange.subdivisions!);
 
                     // Extend the end date if necessary
-                    if (currentHolidayRange.endDate > lastRange.endDate) {
-                        lastRange.endDate = currentHolidayRange.endDate;
+                    if (currentRange.endDate > lastRange.endDate) {
+                        lastRange.endDate = currentRange.endDate;
                     }
                 } else {
                     // No overlap, push new rangeblock
-                    mergedRanges.push(currentHolidayRange);
+                    mergedRanges.push(currentRange);
                 }
             }
 
