@@ -56,6 +56,13 @@ const Thanks = () => {
                 <div className="list-disc">headlessui</div>
                 <div className="list-disc">heroicons</div>
                 <div className="list-disc">zustand</div>
+                <div className="list-disc">
+                    fredley (eck chair from{' '}
+                    <a href="https://thenounproject.com/browse/icons/term/deck-chair/" target="_blank" rel="noreferrer">
+                        Noun Project
+                    </a>
+                    )
+                </div>
                 <div className="list-disc">openapi-react-query</div>
             </div>
         </div>
