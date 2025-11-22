@@ -13,14 +13,15 @@
     --color-theme-background-level-3: var(--color-neutral-100);
 
     --color-theme-text-light: var(--color-white);
-    --color-theme-text-dark: var(--color-orange-950);
+    --color-theme-text-dark: var(--color-sky-800);
 
-    --color-theme-accent: var(--color-emerald-700);
-    --color-theme-cta-background: var(--color-emerald-100);
-    --color-theme-cta-foreground: var(--color-rose-700);
+    --color-theme-accent: var(--color-orange-700);
+
+    --color-theme-cta-background: var(--color-zinc-100);
+    --color-theme-cta-foreground: var(--color-zinc-500);
 
     --color-theme-blocked-range-active-holiday-school: var(--color-red-400);
-    --color-theme-blocked-range-inactive-holiday-school: var(--color-red-100);
+    --color-theme-blocked-range-inactive-holiday-school: var(--color-red-200);
     --color-theme-blocked-range-active-holiday-public: var(--color-cyan-400);
     --color-theme-blocked-range-inactive-holiday-public: var(--color-cyan-100);
 
@@ -37,7 +38,7 @@
 }
 
 html {
-    @apply bg-theme-background h-dvh w-dvw overflow-x-hidden text-sm [--content-width:90%] [--header-height:--spacing(20)] md:[--content-width:80%] xl:[--content-width:70%];
+    @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-bl from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-sm transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90%] [--header-height:--spacing(22)] [--html-element-gradient-from:var(--color-sky-500)] [--html-element-gradient-to:var(--color-sky-50)] [--html-element-gradient-via:transparent] md:[--content-width:80%] xl:[--content-width:70%];
 
     /* Fix headlessui bug: https://github.com/tailwindlabs/headlessui/issues/762  */
     @apply overflow-y-auto! pr-0!;
@@ -94,18 +95,14 @@ input[type='date']::-webkit-calendar-picker-indicator {
     filter: invert(14%) sepia(61%) saturate(6015%) hue-rotate(337deg) brightness(82%) contrast(94%);
 }
 
-#headlessui-portal-root {
-    @apply z-1000 h-[500%] overflow-y-scroll;
-}
-
 .level-1 {
-    @apply bg-theme-background-level-1 border border-gray-200/50 rounded-sm shadow-sm;
+    @apply bg-theme-background-level-1 rounded-sm border border-gray-200/50 shadow-sm;
 }
 
 .level-2 {
-    @apply bg-theme-background-level-2 border border-neutral-100/50 rounded-md shadow-md;
+    @apply bg-theme-background-level-2 rounded-md border border-neutral-100/50 shadow-md;
 }
 
 .level-3 {
-    @apply bg-theme-background-level-3  border border-neutral-200/50 rounded-lg shadow-lg;
+    @apply bg-theme-background-level-3 rounded-lg border border-neutral-200/50 shadow-lg;
 }

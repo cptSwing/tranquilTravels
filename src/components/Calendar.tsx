@@ -68,11 +68,11 @@ const CalendarMonth = ({ monthData, userRange, blockedRanges }: { monthData: Mon
 
     return (
         <div className="">
-            <h5 className="text-theme-cta-foreground mb-1 inline-block pl-1.5 text-left font-serif leading-none">
+            <h5 className="text-theme-accent mb-1 inline-block pl-1.5 text-left font-serif leading-none">
                 {MONTH_NAMES[monthIndex]} {year}
             </h5>
 
-            <div className="level-2 grid grid-cols-7 overflow-hidden border border-neutral-400/50">
+            <div className="level-2 border-theme-cta-foreground/20! grid grid-cols-7 overflow-hidden">
                 <WeekdayNames />
                 {cells.map((cell) => {
                     const positionInUserRange = getPositionInRange(cell.dateString, userRange.startDate, userRange.endDate);
@@ -132,7 +132,7 @@ const CalendarDay = ({
                                       : // 'middle' or 'single'
                                         'bg-theme-blocked-range-active-holiday-school'
                                 : 'bg-theme-blocked-range-inactive-holiday-school'
-                            : 'border-theme-blocked-range-inactive-holiday-school box-border border-t border-r-[calc(1px*var(--month-view-has-outer-right-edge))] border-b border-l-[calc(1px*var(--month-view-has-outer-left-edge))]',
+                            : 'border-theme-blocked-range-inactive-holiday-school border-t border-r-[calc(1px*var(--month-view-has-outer-right-edge))] border-b border-l-[calc(1px*var(--month-view-has-outer-left-edge))]',
                         positionInBlockedRange === 'first'
                             ? '[--month-view-has-outer-left-edge:1]'
                             : positionInBlockedRange === 'last'
@@ -147,16 +147,18 @@ const CalendarDay = ({
             {/* User-Range start- and endpoints */}
             <div
                 className={classNames(
-                    'absolute',
+                    'bg-theme-cta-background after:bg-theme-accent outline-theme-accent absolute top-[-5%] left-1/2 z-10 aspect-square h-[110%] -translate-x-1/2 rounded-full outline-5 -outline-offset-1 after:absolute after:top-[12%] after:bottom-[12%] after:-z-10',
                     isAtUserRangeExtents
-                        ? 'border-theme-cta-foreground bg-theme-cta-background top-[-5%] left-1/2 z-10 aspect-square h-[110%] -translate-x-1/2 rounded-full border-2 outline-4 outline-white'
-                        : '',
+                        ? positionInUserRange === 'first'
+                            ? 'after:-right-1/2 after:left-1/2 after:[clip-path:polygon(50%_0%,90%_50%,50%_100%)]'
+                            : 'after:right-1/2 after:-left-1/2 after:[clip-path:polygon(50%_0%,10%_50%,50%_100%)]'
+                        : 'hidden',
                 )}
             />
 
             <span
                 className={classNames(
-                    'z-10 font-light',
+                    'z-20 font-light',
                     monthPosition === 'currentMonth'
                         ? isOutsideUserRangeInsideBlockedRange
                             ? 'text-theme-blocked-range-active-holiday-school'

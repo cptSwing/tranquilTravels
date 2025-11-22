@@ -34,7 +34,7 @@ const ChooseCountries = () => {
     return (
         <div className="level-2 flex basis-2/4 flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
             <div>
-                <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">3. Choose Countries:</h6>
+                <h6 className="text-theme-accent mb-0.5 block text-left font-serif leading-tight">3. Choose Countries:</h6>
                 <p className="text-left text-xs">Pick the countries you&apos;d want to avoid (the bigger, the better obviously?)</p>
             </div>
 

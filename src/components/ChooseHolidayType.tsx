@@ -2,7 +2,7 @@ const ChooseHolidayType = () => {
     return (
         <div className="level-2 flex basis-auto flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
             <div>
-                <h6 className="text-theme-cta-foreground mb-0.5 text-left font-serif leading-tight">2. Choose Holiday Type:</h6>
+                <h6 className="text-theme-accent mb-0.5 text-left font-serif leading-tight">2. Choose Holiday Type:</h6>
                 <p className="text-left text-xs">View school holidays, public holidays, or both.</p>
             </div>
 
