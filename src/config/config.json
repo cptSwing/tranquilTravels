@@ -1,8 +1,8 @@
 {
     "language": "EN",
     "date": {
-        "from": { "date": 15, "monthIndex": 8, "year": 2025, "dateString": "2025-09-15" },
-        "to": { "date": 14, "monthIndex": 1, "year": 2026, "dateString": "2026-02-14" }
+        "from": { "date": 1, "monthIndex": 3, "year": 2025, "dateString": "2025-04-01" },
+        "to": { "date": 31, "monthIndex": 4, "year": 2025, "dateString": "2025-05-31" }
     },
     "countrySelectionMax": 5,
     "debug": false,

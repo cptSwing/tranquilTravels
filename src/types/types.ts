@@ -44,3 +44,5 @@ export type DateRange = {
 
 /* Helper from https://stackoverflow.com/a/57447842 */
 type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
+
+export type MapValue<M> = M extends Map<unknown, infer T> ? T : never;

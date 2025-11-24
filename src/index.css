@@ -7,9 +7,9 @@
     --text-3xs--line-height: 0.7rem;
 
     --color-theme-background: var(--color-white);
-    --color-theme-background-level-1: var(--color-gray-100);
-    --color-theme-background-level-2: var(--color-neutral-50);
-    --color-theme-background-level-3: var(--color-neutral-100);
+    --color-theme-background-level-1: var(--color-neutral-200);
+    --color-theme-background-level-2: var(--color-neutral-100);
+    --color-theme-background-level-3: var(--color-neutral-50);
 
     --color-theme-text-light: var(--color-white);
     --color-theme-text-dark: var(--color-sky-800);
@@ -82,7 +82,7 @@ label {
 
 /* Calender icon coloring in firefox */
 input[type='date'] {
-    @apply accent-theme-cta-foreground;
+    @apply accent-theme-cta-foreground cursor-pointer;
 }
 
 /* Calender icon coloring in chrome, using https://codepen.io/sosuke/pen/Pjoqqp */
@@ -92,13 +92,13 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 .level-1 {
-    @apply bg-theme-background-level-1 rounded-sm border border-gray-200/50 shadow-sm;
+    @apply bg-theme-background-level-1 rounded-sm border border-theme-background-level-2/50 shadow-sm;
 }
 
 .level-2 {
-    @apply bg-theme-background-level-2 rounded-md border border-neutral-100/50 shadow-md;
+    @apply bg-theme-background-level-2 rounded-md border border-theme-background-level-3/50 shadow-md;
 }
 
 .level-3 {
-    @apply bg-theme-background-level-3 rounded-lg border border-neutral-200/50 shadow-lg;
+    @apply bg-theme-background-level-3 rounded-lg border border-theme-background-level-1/50 shadow-lg;
 }

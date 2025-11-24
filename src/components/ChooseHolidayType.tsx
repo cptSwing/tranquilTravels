@@ -8,7 +8,7 @@ const ChooseHolidayType = () => {
 
             <div className="flex w-full flex-row items-end justify-between gap-3 md:gap-4">
                 <div className="flex basis-1/2 flex-row items-center justify-start gap-1.5">
-                    <input id="select-holiday-type-school" type="checkbox" value="school" checked />
+                    <input id="select-holiday-type-school" type="checkbox" value="school" checked readOnly />
                     <label htmlFor="select-holiday-type-school" className="">
                         School
                     </label>
