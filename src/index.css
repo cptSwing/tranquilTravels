@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-/* @plugin 'tailwindcss-breakpoints-inspector'; */
 
 @theme {
     --text-2xs: 0.625rem;
@@ -30,15 +29,8 @@
     --inset-shadow-nondirectional-sm: inset 0px 0px 2px 0px var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
 }
 
-:root {
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
 html {
-    @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-bl from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-sm transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90%] [--header-height:--spacing(22)] [--html-element-gradient-from:var(--color-sky-500)] [--html-element-gradient-to:var(--color-sky-50)] [--html-element-gradient-via:transparent] md:[--content-width:80%] xl:[--content-width:70%];
+    @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-tr from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-sm transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90dvw] [--header-height:--spacing(22)] md:[--content-width:80dvw] xl:[--content-width:70dvw];
 
     /* Fix headlessui bug: https://github.com/tailwindlabs/headlessui/issues/762  */
     @apply overflow-y-auto! pr-0!;
@@ -82,6 +74,10 @@ h6 {
 
 label {
     @apply text-xs;
+}
+
+#root {
+    display: contents;
 }
 
 /* Calender icon coloring in firefox */
