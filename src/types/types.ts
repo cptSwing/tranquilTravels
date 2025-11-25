@@ -7,12 +7,12 @@ export interface ZustandStore {
             from: DateRangePoint;
             to: DateRangePoint;
         };
-        rangeDescription: string;
+        dateDetailsActive: boolean;
     };
     methods: {
         store_setCountriesCapped: (countries: ZustandStore['values']['countries']) => void;
         store_setDateRange: (dateRange: Partial<ZustandStore['values']['dateRange']>) => void;
-        store_setRangeDescription: (rangeDescription: Partial<ZustandStore['values']['rangeDescription']>) => void;
+        store_setDateDetails: (active: boolean) => void;
     };
 }
 
@@ -35,6 +35,7 @@ export type MonthData = Pick<DateRangePoint, 'year' | 'monthIndex'> & {
 };
 
 export type DayCellData = { date: number; monthPosition: 'previousMonth' | 'currentMonth' | 'nextMonth'; dateString: string };
+export type RangePosition = 'first' | 'last' | 'middle' | 'single' | null;
 
 export type DayByCountries = Map<string /* country-iso-code */, Map<string /* holidayNames */, { groups: Set<string>; subdivisions: Set<string> }>>;
 export type RangeDays = Map<string /* date-string */, DayByCountries>;
@@ -53,6 +54,7 @@ export type MapValue<M> = M extends Map<unknown, infer T> ? T : never;
 
 export type OpenHolidaysApiError = components['schemas']['ProblemDetails'];
 
+export type CountryData = components['schemas']['CountryResponse'];
 export type HolidayData = components['schemas']['HolidayResponse'];
 export type HolidayDataByCountry = HolidayData & {
     countryItem: ComboboxItem;

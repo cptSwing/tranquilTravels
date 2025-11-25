@@ -47,12 +47,12 @@ const useQueryHolidaysByCountries = (from: string, to: string) => {
         [selectedCountries],
     );
 
-    const combinedQueries = useQueries({
+    const combinedResults = useQueries({
         queries: queryOptions_Memo,
         combine: combineResults_Cb,
     });
 
-    return combinedQueries;
+    return combinedResults;
 };
 
 export default useQueryHolidaysByCountries;

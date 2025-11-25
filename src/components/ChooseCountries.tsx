@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { $api } from '../lib/api';
 import config from '../config/config.json';
 import isDefined from '../lib/isDefined';
 import { useZustandStore } from '../lib/zustandStore';
@@ -7,11 +6,12 @@ import DisplayError from './DisplayError';
 import DisplayLoading from './DisplayLoading';
 import ComboboxDropdown from './ComboBox';
 import { ComboboxItem } from '../types/types';
+import useQueryCountries from '../hooks/useQueryCountries';
 
-const { store_setCountriesCapped, store_setRangeDescription } = useZustandStore.getState().methods;
+const store_setCountriesCapped = useZustandStore.getState().methods.store_setCountriesCapped;
 
 const ChooseCountries = () => {
-    const { data, error, isLoading } = $api.useQuery('get', '/Countries');
+    const { data, error, isLoading } = useQueryCountries();
 
     const listCountries = useMemo(() => {
         if (data) {
@@ -45,11 +45,8 @@ const ChooseCountries = () => {
                         selectedItems={selectedCountries}
                         label="Assignees"
                         // description="bla bla bla description"
-                        onChangeCb={(selectedValues) => {
-                            store_setRangeDescription('');
-                            store_setCountriesCapped(selectedValues);
-                        }}
-                        extraClassNames="shrink-0 lg:basis-1/3  "
+                        onChangeCb={(selectedValues) => store_setCountriesCapped(selectedValues)}
+                        extraClassNames="shrink-0 lg:basis-1/3"
                     />
                 )}
 

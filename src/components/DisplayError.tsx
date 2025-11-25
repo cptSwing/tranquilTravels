@@ -1,9 +1,11 @@
 import { OpenHolidaysApiError } from '../types/types';
 
-const DisplayError = ({ errors }: { errors: OpenHolidaysApiError[] }) => {
+const DisplayError = ({ error }: { error: OpenHolidaysApiError[] | OpenHolidaysApiError }) => {
+    const typedError: OpenHolidaysApiError[] = Array.isArray(error) ? error : [error];
+
     return (
         <>
-            {errors.map((error, idx) => (
+            {typedError.map((error, idx) => (
                 <div key={idx} className="level-1 w-1/4 p-2">
                     An error occured {error.status ? `(Status ${error.status})` : ''}
                     {error.title ? `: ${error.title}` : '!'}
