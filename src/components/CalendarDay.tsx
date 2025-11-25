@@ -74,7 +74,7 @@ const CalendarDay = ({
                     />
 
                     {/* Pop up date information */}
-                    <div className="text-2xs duration-theme border-theme-accent absolute top-1/2 left-1/2 z-30 h-auto w-auto origin-top-left scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono leading-tight whitespace-pre capitalize opacity-10 transition-[opacity,scale] peer-checked:scale-100 peer-checked:opacity-100">
+                    <div className="text-2xs duration-theme border-theme-cta-foreground absolute top-1/2 left-1/2 z-30 h-auto w-auto origin-top-left scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono leading-tight whitespace-pre capitalize opacity-10 transition-[opacity,scale] peer-checked:scale-100 peer-checked:opacity-100">
                         {dayDescription_Memo}
                     </div>
                 </>
@@ -96,8 +96,8 @@ const CalendarDay = ({
             <label
                 htmlFor={isInBlockedRange ? inputId : undefined}
                 className={classNames(
-                    'absolute top-0 left-0 z-20 flex size-full items-center justify-center font-light transition-[color]',
-                    'peer-checked:after:bg-theme-accent after:border-theme-accent after:absolute after:top-0 after:mx-auto after:aspect-square after:h-full after:rounded-full after:border-2 after:opacity-0 after:transition-opacity peer-checked:after:opacity-100 peer-focus:after:opacity-100 hover:after:opacity-100',
+                    'absolute top-0 left-0 z-20 flex size-full items-center justify-center font-light',
+                    'peer-checked:after:bg-theme-cta-background after:border-theme-cta-background after:duration-theme after:absolute after:top-0 after:mx-auto after:aspect-square after:h-full after:scale-10 after:rounded-full after:border-2 after:opacity-0 after:transition-[transform,opacity] peer-checked:after:scale-100 peer-checked:after:opacity-100 peer-focus:after:opacity-100',
                     isInBlockedRange && 'pointer-events-auto cursor-pointer hover:text-neutral-200',
                     monthPosition === 'currentMonth'
                         ? isOutsideUserRangeInsideBlockedRange

@@ -13,7 +13,7 @@ const CalendarMonth = ({ monthData, userRange, blockedRanges }: { monthData: Mon
 
     return (
         <div>
-            <h5 className="text-theme-accent mb-1.5 inline-block pl-1.5 text-left font-serif leading-none">
+            <h5 className="text-theme-cta-foreground mb-2 inline-block pl-1.5 text-left font-serif leading-none">
                 {MONTH_NAMES[monthIndex]} {year}
             </h5>
 
@@ -49,7 +49,7 @@ const WeekdayNames = () =>
     WEEKDAY_NAMES.map((weekDayName, idx) => (
         <div
             key={weekDayName + idx}
-            className="text-2xs w-(--calendar-grid-cell-width) border-b border-b-neutral-200 pt-1 pb-1.5 text-center text-neutral-400 uppercase first-letter:text-xs"
+            className="text-2xs text-theme-text-dark w-(--calendar-grid-cell-width) border-b border-b-neutral-200 pt-0.5 pb-1 text-center uppercase first-letter:text-xs"
         >
             {weekDayName}
         </div>
