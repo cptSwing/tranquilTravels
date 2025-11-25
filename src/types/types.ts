@@ -36,13 +36,24 @@ export type MonthData = Pick<DateRangePoint, 'year' | 'monthIndex'> & {
 
 export type DayCellData = { date: number; monthPosition: 'previousMonth' | 'currentMonth' | 'nextMonth'; dateString: string };
 
+export type DayByCountries = Map<string /* country-iso-code */, Map<string /* holidayNames */, { groups: Set<string>; subdivisions: Set<string> }>>;
+export type RangeDays = Map<string /* date-string */, DayByCountries>;
+
 export type DateRange = {
     startDate: string;
     endDate: string;
     description?: string;
+    dailyDescriptions?: RangeDays;
 };
 
 /* Helper from https://stackoverflow.com/a/57447842 */
 type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
 
 export type MapValue<M> = M extends Map<unknown, infer T> ? T : never;
+
+export type OpenHolidaysApiError = components['schemas']['ProblemDetails'];
+
+export type HolidayData = components['schemas']['HolidayResponse'];
+export type HolidayDataByCountry = HolidayData & {
+    countryItem: ComboboxItem;
+};

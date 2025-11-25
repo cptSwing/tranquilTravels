@@ -5,6 +5,7 @@
         "to": { "date": 31, "monthIndex": 4, "year": 2025, "dateString": "2025-05-31" }
     },
     "countrySelectionMax": 5,
+    "mergeGroupsAndSubdivisions": true,
     "debug": false,
     "version": "0.0.2"
 }

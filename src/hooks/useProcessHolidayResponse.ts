@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { components } from '../types/openHolidaysSchema';
-import { DateRange } from '../types/types';
+import { ComboboxItem, DateRange, HolidayDataByCountry, RangeDays } from '../types/types';
 import { splitDateString } from '../lib/handleDates';
 import isDefined from '../lib/isDefined';
 
-const useProcessHolidayResponse = (holidaysResponse: components['schemas']['HolidayResponse'][][]) => {
+const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) => {
     const timeRanges_Memo = useMemo(() => {
         if (holidaysResponse.length) {
             const flattened = holidaysResponse.flat().filter(isDefined);
@@ -12,32 +11,26 @@ const useProcessHolidayResponse = (holidaysResponse: components['schemas']['Holi
 
             const holidayNamesCache = new Map<string, HolidayGroupsAndSubdivisions>();
             const mergedRanges: DateRangeTemporaryWorkingType[] = [];
+            const rangeDays: RangeDays = new Map();
 
             for (let i = 0; i < sortedHolidays.length; i++) {
                 const currentHoliday = sortedHolidays[i];
-                const currentHolidayName = currentHoliday.name[0].text;
-
-                // var from = new Date(2012,0,1);
-                // const to = new Date(2012, 1, 20);
-                // const from = new Date(splitDateString(currentRange.startDate));
-
-                const from = currentHoliday.startDate;
-                const to = new Date(currentHoliday.endDate);
-
-                // loop for every day
-                for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
-                    // your day is here
-                    console.log(
-                        '%c[useProcessHolidayResponse]',
-                        'color: #ff36d8',
-                        `${currentHolidayName} --> ${currentHoliday.startDate} - ${to.toLocaleDateString('en-CA')} :`,
-                        day.toLocaleDateString('en-CA'),
-                    );
-                }
+                const currentHolidayName = currentHoliday.name[0].text.toLowerCase();
+                const currentHolidayCountry = currentHoliday.countryItem;
 
                 // TODO Accurate name per cell, not per Range
                 const currentGroupName = currentHoliday.groups?.[0].shortName; // Language groups etc
                 const currentSubdivisionName = currentHoliday.subdivisions?.[0].shortName; // States, Provinces etc
+
+                const dailyDescriptions = getDailyDescriptions(
+                    currentHoliday.startDate,
+                    currentHoliday.endDate,
+                    rangeDays,
+                    currentHolidayCountry,
+                    currentHolidayName,
+                    currentGroupName,
+                    currentSubdivisionName,
+                );
 
                 const newGroupsSubdivisions: HolidayGroupsAndSubdivisions = { groups: new Set(), subdivisions: new Set() };
 
@@ -58,6 +51,8 @@ const useProcessHolidayResponse = (holidaysResponse: components['schemas']['Holi
                     holidayNames: new Set([currentHolidayName]),
                     groups: newGroupsSubdivisions.groups,
                     subdivisions: newGroupsSubdivisions.subdivisions,
+
+                    dailyDescriptions,
                 };
 
                 currentRange.description = createDescription(currentRange.holidayNames!, currentRange.groups!, currentRange.subdivisions!);
@@ -86,7 +81,10 @@ const useProcessHolidayResponse = (holidaysResponse: components['schemas']['Holi
                 }
             }
 
-            return mergedRanges.map(({ startDate, endDate, description }) => ({ startDate, endDate, description })) as DateRange[];
+            const filteredRanges = mergedRanges.map(
+                ({ startDate, endDate, description, dailyDescriptions }) => ({ startDate, endDate, description, dailyDescriptions }) as DateRange,
+            );
+            return filteredRanges;
         }
     }, [holidaysResponse]);
 
@@ -94,6 +92,56 @@ const useProcessHolidayResponse = (holidaysResponse: components['schemas']['Holi
 };
 
 export default useProcessHolidayResponse;
+
+function getDailyDescriptions(
+    startDate: string,
+    endDate: string,
+    daysMap: RangeDays,
+    holidayCountry: ComboboxItem,
+    holidayName: string,
+    groupName?: string,
+    subdivisionName?: string,
+) {
+    const from = startDate;
+    const to = new Date(endDate);
+    const { value: countryIsoCode } = holidayCountry;
+
+    // loop for every day
+    for (let dayDate = new Date(from); dayDate <= to; dayDate.setDate(dayDate.getDate() + 1)) {
+        const dayString = dayDate.toLocaleDateString('en-CA');
+
+        const singleDayMap = daysMap.has(dayString) ? daysMap.get(dayString)! : daysMap.set(dayString, new Map()).get(dayString)!;
+
+        if (singleDayMap.has(countryIsoCode)) {
+            const countryMap = singleDayMap.get(countryIsoCode)!;
+
+            let newGroups: Set<string>, newSubdivisions: Set<string>;
+            if (countryMap.has(holidayName)) {
+                const { groups, subdivisions } = countryMap.get(holidayName)!;
+                newGroups = groupName ? groups.add(groupName) : groups;
+                newSubdivisions = subdivisionName ? groups.add(subdivisionName) : subdivisions;
+            } else {
+                newGroups = groupName ? new Set([groupName]) : new Set();
+                newSubdivisions = subdivisionName ? new Set([subdivisionName]) : new Set();
+            }
+
+            countryMap.set(holidayName, {
+                groups: newGroups,
+                subdivisions: newSubdivisions,
+            });
+        } else {
+            singleDayMap.set(
+                countryIsoCode,
+                new Map().set(holidayName, {
+                    groups: groupName ? new Set([groupName]) : new Set(),
+                    subdivisions: subdivisionName ? new Set([subdivisionName]) : new Set(),
+                }),
+            );
+        }
+    }
+
+    return daysMap;
+}
 
 function _getFreeDateRanges(startDateString: string, endDateString: string, blockedRanges: DateRange[]) {
     const ranges: DateRange[] = [];
