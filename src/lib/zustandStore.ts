@@ -11,7 +11,7 @@ export const useZustandStore = create<ZustandStore>()(
                 from: config.date.from,
                 to: config.date.to,
             },
-            rangeDescription: '',
+            dateDetailsActive: false,
         },
 
         methods: {
@@ -33,9 +33,9 @@ export const useZustandStore = create<ZustandStore>()(
                 });
             },
 
-            store_setRangeDescription(rangeDescription) {
+            store_setDateDetails(active) {
                 set((draftStore) => {
-                    draftStore.values.rangeDescription = rangeDescription;
+                    draftStore.values.dateDetailsActive = active;
                 });
             },
         },
