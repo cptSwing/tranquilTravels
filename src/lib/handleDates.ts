@@ -6,7 +6,7 @@ import { wrapNumber } from './modulo';
     --> Date = 25
     --> MonthIndex = 1 (0-based indices)
     --> Year = 2025
-    And: --> Day = 2 (get with Date.getDay() - 0-based indices starting on Sundays, the 25th was a TUESDAY)
+    And: --> Day = 2 (get with Date.getUTCDay() - 0-based indices starting on Sundays, the 25th was a TUESDAY)
 */
 
 export function createDateString(dateObject: Omit<DateRangePoint, 'dateString'>) {

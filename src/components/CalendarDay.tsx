@@ -97,7 +97,7 @@ const CalendarDay = ({
                 htmlFor={isInBlockedRange ? inputId : undefined}
                 className={classNames(
                     'absolute top-0 left-0 z-20 flex size-full items-center justify-center font-light transition-[color]',
-                    'peer-checked:after:bg-theme-accent after:border-theme-accent after:absolute after:top-0 after:mx-auto after:aspect-square after:h-full after:rounded-full after:border-2 after:opacity-0 after:transition-opacity peer-checked:after:opacity-100 hover:after:opacity-100',
+                    'peer-checked:after:bg-theme-accent after:border-theme-accent after:absolute after:top-0 after:mx-auto after:aspect-square after:h-full after:rounded-full after:border-2 after:opacity-0 after:transition-opacity peer-checked:after:opacity-100 peer-focus:after:opacity-100 hover:after:opacity-100',
                     isInBlockedRange && 'pointer-events-auto cursor-pointer hover:text-neutral-200',
                     monthPosition === 'currentMonth'
                         ? isOutsideUserRangeInsideBlockedRange

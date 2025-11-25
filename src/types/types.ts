@@ -43,7 +43,6 @@ export type RangeDays = Map<string /* date-string */, DayByCountries>;
 export type DateRange = {
     startDate: string;
     endDate: string;
-    description?: string;
     dailyDescriptions?: RangeDays;
 };
 

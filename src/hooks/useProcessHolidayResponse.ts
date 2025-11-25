@@ -9,8 +9,7 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
             const flattened = holidaysResponse.flat().filter(isDefined);
             const sortedHolidays = flattened.sort((a, b) => a.startDate.localeCompare(b.startDate));
 
-            const holidayNamesCache = new Map<string, HolidayGroupsAndSubdivisions>();
-            const mergedRanges: DateRangeTemporaryWorkingType[] = [];
+            const mergedRanges: DateRange[] = [];
             const rangeDays: RangeDays = new Map();
 
             for (let i = 0; i < sortedHolidays.length; i++) {
@@ -18,7 +17,6 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
                 const currentHolidayName = currentHoliday.name[0].text.toLowerCase();
                 const currentHolidayCountry = currentHoliday.countryItem;
 
-                // TODO Accurate name per cell, not per Range
                 const currentGroupName = currentHoliday.groups?.[0].shortName; // Language groups etc
                 const currentSubdivisionName = currentHoliday.subdivisions?.[0].shortName; // States, Provinces etc
 
@@ -32,30 +30,11 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
                     currentSubdivisionName,
                 );
 
-                const newGroupsSubdivisions: HolidayGroupsAndSubdivisions = { groups: new Set(), subdivisions: new Set() };
-
-                if (currentGroupName) newGroupsSubdivisions.groups.add(currentGroupName);
-                if (currentSubdivisionName) newGroupsSubdivisions.subdivisions.add(currentSubdivisionName);
-
-                if (holidayNamesCache.has(currentHolidayName)) {
-                    const cachedGroupsSubdivisions = holidayNamesCache.get(currentHolidayName)!;
-                    newGroupsSubdivisions.groups = newGroupsSubdivisions.groups.union(cachedGroupsSubdivisions.groups);
-                    newGroupsSubdivisions.subdivisions = newGroupsSubdivisions.subdivisions.union(cachedGroupsSubdivisions.subdivisions);
-                }
-
-                holidayNamesCache.set(currentHolidayName, newGroupsSubdivisions);
-
-                const currentRange: DateRangeTemporaryWorkingType = {
+                const currentRange: DateRange = {
                     startDate: currentHoliday.startDate,
                     endDate: currentHoliday.endDate,
-                    holidayNames: new Set([currentHolidayName]),
-                    groups: newGroupsSubdivisions.groups,
-                    subdivisions: newGroupsSubdivisions.subdivisions,
-
                     dailyDescriptions,
                 };
-
-                currentRange.description = createDescription(currentRange.holidayNames!, currentRange.groups!, currentRange.subdivisions!);
 
                 if (mergedRanges.length === 0) {
                     mergedRanges.push(currentRange);
@@ -65,12 +44,6 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
                 const lastRange = mergedRanges[mergedRanges.length - 1];
 
                 if (currentRange.startDate <= lastRange.endDate) {
-                    lastRange.holidayNames!.add(currentHolidayName);
-                    lastRange.groups = lastRange.groups!.union(newGroupsSubdivisions.groups);
-                    lastRange.subdivisions = lastRange.subdivisions!.union(newGroupsSubdivisions.subdivisions);
-
-                    lastRange.description = createDescription(lastRange.holidayNames!, lastRange.groups!, lastRange.subdivisions!);
-
                     // Extend the end date if necessary
                     if (currentRange.endDate > lastRange.endDate) {
                         lastRange.endDate = currentRange.endDate;
@@ -81,9 +54,7 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
                 }
             }
 
-            const filteredRanges = mergedRanges.map(
-                ({ startDate, endDate, description, dailyDescriptions }) => ({ startDate, endDate, description, dailyDescriptions }) as DateRange,
-            );
+            const filteredRanges = mergedRanges.map(({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions }) as DateRange);
             return filteredRanges;
         }
     }, [holidaysResponse]);
@@ -107,10 +78,10 @@ function getDailyDescriptions(
     const { value: countryIsoCode } = holidayCountry;
 
     // loop for every day
-    for (let dayDate = new Date(from); dayDate <= to; dayDate.setDate(dayDate.getDate() + 1)) {
-        const dayString = dayDate.toLocaleDateString('en-CA');
+    for (let dayDate = new Date(from); dayDate <= to; dayDate.setUTCDate(dayDate.getUTCDate() + 1)) {
+        const dateString = dayDate.toLocaleDateString('en-CA');
 
-        const singleDayMap = daysMap.has(dayString) ? daysMap.get(dayString)! : daysMap.set(dayString, new Map()).get(dayString)!;
+        const singleDayMap = daysMap.has(dateString) ? daysMap.get(dateString)! : daysMap.set(dateString, new Map()).get(dateString)!;
 
         if (singleDayMap.has(countryIsoCode)) {
             const countryMap = singleDayMap.get(countryIsoCode)!;
@@ -180,19 +151,3 @@ function _getFreeDateRanges(startDateString: string, endDateString: string, bloc
 
     return ranges;
 }
-
-function createDescription(names: Set<string>, groups: Set<string>, subdivisions: Set<string>) {
-    const nameString = [...names].join('/');
-    const groupsString = [...groups].join(', ');
-    const subdivisionsString = [...subdivisions].join(', ');
-
-    return `${nameString} ${groupsString ? `(${groupsString})` : ''} ${subdivisionsString ? ` (${subdivisionsString})` : ''} `;
-}
-
-type DateRangeTemporaryWorkingType = DateRange & {
-    holidayNames?: Set<string>;
-    groups?: Set<string>;
-    subdivisions?: Set<string>;
-};
-
-type HolidayGroupsAndSubdivisions = { groups: Set<string>; subdivisions: Set<string> };
