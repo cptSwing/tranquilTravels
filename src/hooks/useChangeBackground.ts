@@ -4,32 +4,30 @@ import { wrapNumber } from '../lib/modulo';
 
 /* from https://gradient.page/ui-gradients */
 const backgroundGradients: { name: string; from: string; to: string; via?: string }[] = [
+    { name: 'velvet sun', to: '#e1eec3', from: '#f05053' },
     { name: 'horizon', to: '#003973', from: '#E5E5BE' },
     { name: 'bora bora', to: '#2BC0E4', from: '#EAECC6' },
-    { name: 'between the clouds', to: '#73C8A9', from: '#373B44' },
     { name: 'sweet morning', to: '#FF5F6D', from: '#FFC371' },
-    { name: 'sunset', to: '#0B486B', from: '#F56217' },
     { name: 'sun on the horizon', to: '#fceabb', from: '#f8b500' },
     { name: "ed's sunset gradient", to: '#ff7e5f', from: '#feb47b' },
     { name: 'maldives', to: '#B2FEFA', from: '#0ED2F7' },
-    { name: 'velvet sun', to: '#e1eec3', from: '#f05053' },
-    { name: 'evening night', to: '#005AA7', from: '#FFFDE4' },
     { name: 'cool sky', to: '#2980B9', via: '#6DD5FA', from: '#FFFFFF' },
-    { name: 'evening sunshine', to: '#b92b27', from: '#1565C0' },
     { name: 'true sunset', to: '#fa709a', from: '#fee140' },
-    { name: 'sleepness night', to: '#5271C4', via: '#B19FFF', from: '#ECA1FE' },
-    { name: 'supreme sky', to: '#D4FFEC', via: '#57F2CC', from: '#4596FB' },
     { name: 'noon to dusk', to: '#ff6e7f', from: '#bfe9ff' },
     { name: 'sky', to: '#076585', from: '#FFFFFF' },
-    { name: 'the sky and the sea', to: '#F7941E', from: '#004E8F' },
     { name: 'ibiza sunset', to: '#ee0979', from: '#ff6a00' },
+    // { name: 'the sky and the sea', to: '#F7941E', from: '#004E8F' },
+    // { name: 'between the clouds', to: '#73C8A9', from: '#373B44' },
+    // { name: 'sleepness night', to: '#5271C4', via: '#B19FFF', from: '#ECA1FE' },
+    // { name: 'supreme sky', to: '#D4FFEC', via: '#57F2CC', from: '#4596FB' },
+    // { name: 'evening night', to: '#005AA7', from: '#FFFDE4' },
+    // { name: 'evening sunshine', to: '#b92b27', from: '#1565C0' },
+    // { name: 'sunset', to: '#0B486B', from: '#F56217' },
 ];
-
-const randomGradientIndex = Math.floor(backgroundGradients.length * Math.random());
 
 const useChangeBackground = () => {
     const htmlElement_Ref = useRef<HTMLHtmlElement | null>(null);
-    const [currentIndex, setCurrentIndex] = useState(randomGradientIndex);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         if (!htmlElement_Ref.current) {
