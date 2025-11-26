@@ -9,7 +9,7 @@ const ChooseDateRange = () => {
     return (
         <div className="level-2 flex grow flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
             <div className="flex flex-col">
-                <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">1. Choose Date Range:</h6>
+                <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">1. Choose Travel Window:</h6>
                 <p className="text-theme-text-dark text-left text-xs">Pick a timeframe for your vacation (max 11 months)</p>
             </div>
 

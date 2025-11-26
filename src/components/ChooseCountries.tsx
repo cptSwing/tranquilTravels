@@ -34,8 +34,10 @@ const ChooseCountries = () => {
     return (
         <div className="level-2 flex flex-grow-2 flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
             <div className="">
-                <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">3. Choose Countries:</h6>
-                <p className="text-theme-text-dark text-left text-xs">Pick the countries you&apos;d want to avoid (the bigger, the better obviously?)</p>
+                <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">3. Select Countries To Avoid:</h6>
+                <p className="text-theme-text-dark text-left text-xs">
+                    Pick countries you&apos;d want to keep an eye on. Maybe because they have large populations, or seem particularly annoying (Germans).
+                </p>
             </div>
 
             <div className="flex flex-row items-end justify-between gap-3 md:flex-col md:gap-4 lg:flex-row lg:items-end">
@@ -43,7 +45,7 @@ const ChooseCountries = () => {
                     <ComboboxDropdown
                         items={countriesList}
                         selectedItems={selectedCountries}
-                        label="Select or type:"
+                        label="Select from list, or type:"
                         onChangeCb={(selectedValues) => store_setCountriesCapped(selectedValues)}
                         extraClassNames="shrink-0 grow lg:grow-2 text-theme-text-dark"
                     />
@@ -61,7 +63,7 @@ const CountryPills = ({ selectedCountries, extraClassNames }: { selectedCountrie
     selectedCountries.length ? (
         <div className={extraClassNames}>
             <span className="text-theme-text-dark pl-px text-xs">
-                Current Selection ({selectedCountries.length}/{config.countrySelectionMax}) :
+                Selected ({selectedCountries.length}/{config.countrySelectionMax}) :
             </span>
             <ul className="flex flex-row flex-wrap gap-1.5">
                 {selectedCountries.map((country) => {

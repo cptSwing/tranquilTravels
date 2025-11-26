@@ -1,24 +1,31 @@
 const Acknowledgements = () => {
     return (
-        <div className="text-theme-text-light mx-auto max-w-3/4">
-            <h6 className="mb-2 text-center italic">Thanks to</h6>
+        <div className="text-theme-text-light mx-auto w-full md:w-2/5">
+            <h6 className="mb-0.5 text-center italic md:mb-1">Thanks to</h6>
 
-            <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
-                <div className="list-disc">OpenHolidays API</div>
-                <div className="list-disc">headlessui</div>
-                <div className="list-disc">heroicons</div>
-                <div className="list-disc">
+            <ul className="text-2xs grid grid-cols-2 gap-0.5 *:text-center md:gap-1 md:text-xs">
+                <li>
+                    <a href="https://www.openholidaysapi.org/" target="_blank" rel="noreferrer">
+                        OpenHolidays API
+                    </a>
+                </li>
+                <li>headlessui</li>
+                <li>heroicons</li>
+                <li>
                     <a href="https://gradient.page/ui-gradients" target="_blank" rel="noreferrer">
                         Gradient Page
                     </a>
-                </div>
-                <div className="list-disc">
+                </li>
+                <li>
                     <a href="https://thenounproject.com/browse/icons/term/deck-chair/" target="_blank" rel="noreferrer">
                         fredley&apos;s deck chair icon (Noun Project)
                     </a>
-                </div>
-                <div className="list-disc">ChatGPT for the cringe sub-header (the title itself is on me)</div>
-            </div>
+                </li>
+                <li>
+                    ChatGPT for the cringe sub-header <br />
+                    (the title itself is on me)
+                </li>
+            </ul>
         </div>
     );
 };
