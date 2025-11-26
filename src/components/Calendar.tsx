@@ -12,7 +12,7 @@ const Calendar = () => {
     const { from, to } = useZustandStore((store) => store.values.dateRange);
 
     const { data, isPending, errors } = useQueryHolidaysByCountries(from.dateString, to.dateString);
-    const { blockedRanges } = useProcessHolidayResponse(data);
+    const { blockedRangesSchool, blockedRangesPublic } = useProcessHolidayResponse(data) ?? {};
     const monthsData = useCreateCalendarMonths({ from, to });
 
     if (errors.length) return <DisplayError error={errors} />;
@@ -20,7 +20,7 @@ const Calendar = () => {
     if (!monthsData) return;
 
     return (
-        <div className="level-1 pointer-events-none z-0 mb-4 grid w-full grid-cols-1 gap-4 p-(--main-elements-padding) [--calendar-grid-cell-height:--spacing(8)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="level-1 pointer-events-none z-0 grid w-full grid-cols-1 gap-4 p-(--main-elements-padding) [--calendar-grid-cell-height:--spacing(9)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <DeactiveDateDetails />
 
             {monthsData?.map((monthData, idx) => (
@@ -28,7 +28,8 @@ const Calendar = () => {
                     key={from.dateString + to.dateString + idx}
                     monthData={monthData}
                     userRange={{ startDate: from.dateString, endDate: to.dateString }}
-                    blockedRanges={blockedRanges}
+                    blockedRangesSchool={blockedRangesSchool}
+                    blockedRangesPublic={blockedRangesPublic}
                 />
             ))}
         </div>

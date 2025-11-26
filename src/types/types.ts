@@ -7,11 +7,13 @@ export interface ZustandStore {
             from: DateRangePoint;
             to: DateRangePoint;
         };
+        holidayType: Record<'schoolHoliday' | 'publicHoliday', boolean>;
         dateDetailsActive: boolean;
     };
     methods: {
         store_setCountriesCapped: (countries: ZustandStore['values']['countries']) => void;
         store_setDateRange: (dateRange: Partial<ZustandStore['values']['dateRange']>) => void;
+        store_setHolidayType: (type: Partial<ZustandStore['values']['holidayType']>) => void;
         store_setDateDetails: (active: boolean) => void;
     };
 }
@@ -43,7 +45,7 @@ export type RangeDays = Map<string /* date-string */, DayByCountries>;
 export type DateRange = {
     startDate: string;
     endDate: string;
-    dailyDescriptions?: RangeDays;
+    dailyDescriptions: RangeDays;
 };
 
 /* Helper from https://stackoverflow.com/a/57447842 */
@@ -56,5 +58,8 @@ export type OpenHolidaysApiError = components['schemas']['ProblemDetails'];
 export type CountryData = components['schemas']['CountryResponse'];
 export type HolidayData = components['schemas']['HolidayResponse'];
 export type HolidayDataByCountry = HolidayData & {
-    countryItem: ComboboxItem;
+    metaData: {
+        countryItem: ComboboxItem;
+        holidayType: keyof ZustandStore['values']['holidayType'];
+    };
 };

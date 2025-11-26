@@ -11,6 +11,7 @@ export const useZustandStore = create<ZustandStore>()(
                 from: config.date.from,
                 to: config.date.to,
             },
+            holidayType: { schoolHoliday: true, publicHoliday: true },
             dateDetailsActive: false,
         },
 
@@ -30,6 +31,12 @@ export const useZustandStore = create<ZustandStore>()(
             store_setDateRange(dateRange) {
                 set((draftStore) => {
                     draftStore.values.dateRange = { ...draftStore.values.dateRange, ...dateRange };
+                });
+            },
+
+            store_setHolidayType: (type) => {
+                set((draftStore) => {
+                    draftStore.values.holidayType = { ...draftStore.values.holidayType, ...type };
                 });
             },
 

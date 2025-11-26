@@ -13,43 +13,43 @@ const store_setCountriesCapped = useZustandStore.getState().methods.store_setCou
 const ChooseCountries = () => {
     const { data, error, isLoading } = useQueryCountries();
 
-    const listCountries = useMemo(() => {
+    const countriesList = useMemo(() => {
         if (data) {
             const countries: ComboboxItem[] = data
                 .map((countryResponse) => {
                     const nameInLanguage = countryResponse.name.find((localizedText) => localizedText.language === config.language);
                     if (nameInLanguage) return { value: countryResponse.isoCode, text: nameInLanguage.text };
                 })
-                .filter(isDefined);
+                .filter(isDefined)
+                .sort((a, b) => (a.text < b.text ? -1 : 1));
             if (countries.length) return countries;
         }
     }, [data]);
 
     const selectedCountries = useZustandStore((store) => store.values.countries);
-    // const hasSelectedCountries = isDefined(selectedCountries[0]);
 
     if (error) return <DisplayError error={error} />;
     if (isLoading) return <DisplayLoading />;
 
     return (
-        <div className="level-2 flex basis-2/4 flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
-            <div>
+        <div className="level-2 flex flex-grow-2 flex-col items-start justify-between gap-y-2 p-(--options-elements-padding)">
+            <div className="">
                 <h6 className="text-theme-cta-foreground mb-0.5 block text-left font-serif leading-tight">3. Choose Countries:</h6>
                 <p className="text-theme-text-dark text-left text-xs">Pick the countries you&apos;d want to avoid (the bigger, the better obviously?)</p>
             </div>
 
-            <div className="flex w-full flex-col items-start justify-between gap-3 md:gap-4 lg:flex-row lg:items-end">
-                {listCountries && (
+            <div className="flex flex-row items-end justify-between gap-3 md:flex-col md:gap-4 lg:flex-row lg:items-end">
+                {countriesList && (
                     <ComboboxDropdown
-                        items={listCountries}
+                        items={countriesList}
                         selectedItems={selectedCountries}
                         label="Select or type:"
                         onChangeCb={(selectedValues) => store_setCountriesCapped(selectedValues)}
-                        extraClassNames="shrink-0 lg:basis-1/3 text-theme-text-dark"
+                        extraClassNames="shrink-0 grow lg:grow-2 text-theme-text-dark"
                     />
                 )}
 
-                <CountryPills selectedCountries={selectedCountries} extraClassNames="lg:basis-2/3 " />
+                <CountryPills selectedCountries={selectedCountries} extraClassNames="grow lg:grow-3 " />
             </div>
         </div>
     );
@@ -61,9 +61,9 @@ const CountryPills = ({ selectedCountries, extraClassNames }: { selectedCountrie
     selectedCountries.length ? (
         <div className={extraClassNames}>
             <span className="text-theme-text-dark pl-px text-xs">
-                Current Picks ({selectedCountries.length}/{config.countrySelectionMax}) :
+                Current Selection ({selectedCountries.length}/{config.countrySelectionMax}) :
             </span>
-            <ul className="flex flex-row flex-wrap gap-1.5 md:flex-col lg:flex-row">
+            <ul className="flex flex-row flex-wrap gap-1.5">
                 {selectedCountries.map((country) => {
                     return (
                         <li
@@ -79,9 +79,7 @@ const CountryPills = ({ selectedCountries, extraClassNames }: { selectedCountrie
                             >
                                 &#10005;
                             </button>
-                            <span className="text-theme-text-light group-hover:text-theme-text-dark/80 inline-block text-center text-sm text-nowrap transition-[color]">
-                                {country.text}
-                            </span>
+                            <span className="text-theme-text-light inline-block text-center text-sm text-nowrap">{country.text}</span>
                         </li>
                     );
                 })}

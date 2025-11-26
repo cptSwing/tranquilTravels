@@ -20,9 +20,9 @@
     --color-theme-cta-foreground: var(--color-amber-700);
 
     --color-theme-blocked-range-active-holiday-school: var(--color-red-400);
-    --color-theme-blocked-range-inactive-holiday-school: var(--color-red-200);
+    --color-theme-blocked-range-inactive-holiday-school: var(--color-red-300);
     --color-theme-blocked-range-active-holiday-public: var(--color-cyan-400);
-    --color-theme-blocked-range-inactive-holiday-public: var(--color-cyan-100);
+    --color-theme-blocked-range-inactive-holiday-public: var(--color-cyan-200);
 
     --transition-duration-theme: 300ms;
 
@@ -30,7 +30,7 @@
 }
 
 html {
-    @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-tr from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-sm transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90dvw] [--header-height:--spacing(22)] md:[--content-width:80dvw] xl:[--content-width:70dvw];
+    @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-tr from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-base transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90dvw] [--header-height:--spacing(22)] md:[--content-width:80dvw] xl:[--content-width:70dvw];
 
     /* Fix headlessui bug: https://github.com/tailwindlabs/headlessui/issues/762  */
     @apply pr-0!;

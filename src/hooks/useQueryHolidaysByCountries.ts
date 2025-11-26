@@ -9,13 +9,21 @@ import { HolidayData, HolidayDataByCountry, OpenHolidaysApiError } from '../type
 type HolidayQueryOptions = UseQueryOptions<HolidayData[], OpenHolidaysApiError, HolidayData[], unknown[]>;
 
 const useQueryHolidaysByCountries = (from: string, to: string) => {
+    const selectedHolidayTypes = useZustandStore((s) => s.values.holidayType);
     const selectedCountries = useZustandStore((s) => s.values.countries);
 
-    const queryOptions_Memo = useMemo(
-        () =>
-            selectedCountries.map(
-                (countryItem) =>
-                    $api.queryOptions('get', '/SchoolHolidays', {
+    const { queryOptions, metaDatas } = useMemo(() => {
+        const metaDatas: HolidayDataByCountry['metaData'][] = [];
+
+        const queryOptions = Object.entries(selectedHolidayTypes)
+            .filter(([_, isSelected]) => isSelected)
+            .flatMap(([holidayType]) =>
+                selectedCountries.map((countryItem) => {
+                    metaDatas.push({
+                        countryItem,
+                        holidayType: holidayType as 'schoolHoliday' | 'publicHoliday',
+                    });
+                    return $api.queryOptions('get', holidayType === 'schoolHoliday' ? '/SchoolHolidays' : '/PublicHolidays', {
                         params: {
                             query: {
                                 countryIsoCode: countryItem.value,
@@ -24,31 +32,34 @@ const useQueryHolidaysByCountries = (from: string, to: string) => {
                                 languageIsoCode: config.language,
                             },
                         },
-                    }) as unknown as HolidayQueryOptions,
-            ),
-        [from, selectedCountries, to],
-    );
+                    }) as unknown as HolidayQueryOptions;
+                }),
+            )
+            .filter(isDefined);
+
+        return { queryOptions, metaDatas };
+    }, [from, selectedCountries, selectedHolidayTypes, to]);
 
     const combineResults_Cb = useCallback(
         (results: QueriesResults<HolidayQueryOptions[]>) => ({
             data: results
-                // .map((r) => r.data)
-                .map((r, idx) =>
-                    r.data?.map((rD) => {
-                        const rDByCountry = rD as HolidayDataByCountry;
-                        rDByCountry.countryItem = selectedCountries[idx];
-                        return rDByCountry;
-                    }),
-                )
+                .map((result, idx) => {
+                    return result.data?.map((holidayData) => {
+                        const holidayDataByCountry = holidayData as HolidayDataByCountry;
+                        holidayDataByCountry.metaData = { ...metaDatas[idx] };
+
+                        return holidayDataByCountry;
+                    });
+                })
                 .filter(isDefined),
             isPending: results.some((r) => r.isPending),
             errors: results.map((r) => r.error).filter(isDefined),
         }),
-        [selectedCountries],
+        [metaDatas],
     );
 
     const combinedResults = useQueries({
-        queries: queryOptions_Memo,
+        queries: queryOptions,
         combine: combineResults_Cb,
     });
 

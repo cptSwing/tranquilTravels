@@ -9,18 +9,21 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
             const flattened = holidaysResponse.flat().filter(isDefined);
             const sortedHolidays = flattened.sort((a, b) => a.startDate.localeCompare(b.startDate));
 
-            const mergedRanges: DateRange[] = [];
+            const mergedSchoolRanges: DateRange[] = [];
+            const mergedPublicRanges: DateRange[] = [];
+
             const rangeDays: RangeDays = new Map();
 
             for (let i = 0; i < sortedHolidays.length; i++) {
                 const currentHoliday = sortedHolidays[i];
-                const currentHolidayName = currentHoliday.name[0].text.toLowerCase();
-                const currentHolidayCountry = currentHoliday.countryItem;
+                const currentHolidayTypeRange = currentHoliday.metaData.holidayType === 'schoolHoliday' ? mergedSchoolRanges : mergedPublicRanges;
 
+                const currentHolidayName = currentHoliday.name[0].text.toLowerCase();
+                const currentHolidayCountry = currentHoliday.metaData.countryItem;
                 const currentGroupName = currentHoliday.groups?.[0].shortName; // Language groups etc
                 const currentSubdivisionName = currentHoliday.subdivisions?.[0].shortName; // States, Provinces etc
 
-                const dailyDescriptions = getDailyDescriptions(
+                const dailyDescriptions = getDailyDescriptionData(
                     currentHoliday.startDate,
                     currentHoliday.endDate,
                     rangeDays,
@@ -36,35 +39,42 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
                     dailyDescriptions,
                 };
 
-                if (mergedRanges.length === 0) {
-                    mergedRanges.push(currentRange);
+                if (currentHolidayTypeRange.length === 0) {
+                    currentHolidayTypeRange.push(currentRange);
                     continue;
                 }
 
-                const lastRange = mergedRanges[mergedRanges.length - 1];
+                const lastRange = currentHolidayTypeRange[currentHolidayTypeRange.length - 1];
 
                 if (currentRange.startDate <= lastRange.endDate) {
                     // Extend the end date if necessary
                     if (currentRange.endDate > lastRange.endDate) {
                         lastRange.endDate = currentRange.endDate;
+                        // lastRange.dailyDescriptions = union(lastRange.dailyDescriptions, currentRange.dailyDescriptions);
                     }
                 } else {
                     // No overlap, push new rangeblock
-                    mergedRanges.push(currentRange);
+                    currentHolidayTypeRange.push(currentRange);
                 }
             }
 
-            const filteredRanges = mergedRanges.map(({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions }) as DateRange);
-            return filteredRanges;
+            return {
+                blockedRangesSchool: mergedSchoolRanges.map(
+                    ({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions }) as DateRange,
+                ),
+                blockedRangesPublic: mergedPublicRanges.map(
+                    ({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions }) as DateRange,
+                ),
+            };
         }
     }, [holidaysResponse]);
 
-    return { blockedRanges: timeRanges_Memo };
+    return timeRanges_Memo;
 };
 
 export default useProcessHolidayResponse;
 
-function getDailyDescriptions(
+function getDailyDescriptionData(
     startDate: string,
     endDate: string,
     daysMap: RangeDays,
@@ -87,10 +97,11 @@ function getDailyDescriptions(
             const countryMap = singleDayMap.get(countryIsoCode)!;
 
             let newGroups: Set<string>, newSubdivisions: Set<string>;
+
             if (countryMap.has(holidayName)) {
                 const { groups, subdivisions } = countryMap.get(holidayName)!;
                 newGroups = groupName ? groups.add(groupName) : groups;
-                newSubdivisions = subdivisionName ? groups.add(subdivisionName) : subdivisions;
+                newSubdivisions = subdivisionName ? subdivisions.add(subdivisionName) : subdivisions;
             } else {
                 newGroups = groupName ? new Set([groupName]) : new Set();
                 newSubdivisions = subdivisionName ? new Set([subdivisionName]) : new Set();
@@ -114,8 +125,9 @@ function getDailyDescriptions(
     return daysMap;
 }
 
-function _getFreeDateRanges(startDateString: string, endDateString: string, blockedRanges: DateRange[]) {
-    const ranges: DateRange[] = [];
+// WARN 'dailyDescriptions' omitted from parameter type, just to silence the linter
+function _getFreeDateRanges(startDateString: string, endDateString: string, blockedRanges: Omit<DateRange, 'dailyDescriptions'>[]) {
+    const ranges: Omit<DateRange, 'dailyDescriptions'>[] = [];
     let currentDate = startDateString;
 
     // for (const block of merged) {
