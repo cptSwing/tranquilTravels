@@ -24,7 +24,7 @@ export type ComboboxItem = {
 };
 
 export type DateRangePoint = {
-    date: number;
+    day: number;
     monthIndex: number;
     year: number;
     dateString: string;
@@ -36,7 +36,7 @@ export type MonthData = Pick<DateRangePoint, 'year' | 'monthIndex'> & {
     cells: DayCellData[];
 };
 
-export type DayCellData = { date: number; monthPosition: 'previousMonth' | 'currentMonth' | 'nextMonth'; dateString: string };
+export type DayCellData = { day: number; monthPosition: 'previousMonth' | 'currentMonth' | 'nextMonth'; dateString: string };
 export type RangePosition = 'first' | 'last' | 'middle' | 'single' | null;
 
 export type DayByCountries = Map<string /* country-iso-code */, Map<string /* holidayNames */, { groups: Set<string>; subdivisions: Set<string> }>>;

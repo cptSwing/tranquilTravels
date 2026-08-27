@@ -19,7 +19,7 @@ const CalendarDay = ({
     positionInBlockedRangePublic: RangePosition | undefined;
     descriptions: MapValue<RangeDays> | undefined;
 }) => {
-    const { date, monthPosition, dateString } = dayCell;
+    const { day, monthPosition, dateString } = dayCell;
     const isInUserRange = !!positionInUserRange;
     const isOnUserRangeStartOrEnd = positionInUserRange === 'first' || positionInUserRange === 'last';
 
@@ -148,7 +148,7 @@ const CalendarDay = ({
                         : 'text-neutral-400',
                 )}
             >
-                {date}
+                {day}
             </label>
         </div>
     );

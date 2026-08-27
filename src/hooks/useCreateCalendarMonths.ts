@@ -127,28 +127,28 @@ function getDayCells({
         const monthPosition: DayCellData['monthPosition'] =
             idx < cellsBeforeMonth ? 'previousMonth' : idx >= cellsBeforeMonthPlusCellsMonths ? 'nextMonth' : 'currentMonth';
 
-        let date, dateString;
+        let day, dateString;
 
         switch (monthPosition) {
             case 'previousMonth':
-                date = previousMonthLength - (cellsBeforeMonth - idx) + 1;
-                dateString = createDateString({ date, monthIndex: previousMonthIndex, year: previousMonthYear });
+                day = previousMonthLength - (cellsBeforeMonth - idx) + 1;
+                dateString = createDateString({ day, monthIndex: previousMonthIndex, year: previousMonthYear });
                 break;
             case 'currentMonth':
-                date = idx - cellsBeforeMonth + 1;
-                dateString = createDateString({ date, monthIndex, year });
+                day = idx - cellsBeforeMonth + 1;
+                dateString = createDateString({ day, monthIndex, year });
 
                 break;
             case 'nextMonth':
-                date = idx - cellsBeforeMonthPlusCellsMonths + 1;
-                dateString = createDateString({ date, monthIndex: nextMonthIndex, year: nextMonthYear });
+                day = idx - cellsBeforeMonthPlusCellsMonths + 1;
+                dateString = createDateString({ day, monthIndex: nextMonthIndex, year: nextMonthYear });
 
                 break;
         }
 
         return {
             monthPosition,
-            date,
+            day,
             dateString,
         };
     });

@@ -138,8 +138,8 @@ function _getFreeDateRanges(startDateString: string, endDateString: string, bloc
         const endDate = splitDateString(blockedRange.startDate);
 
         if (startDate && endDate) {
-            const oneDayLaterStartDateString = new Date(startDate.year, startDate.monthIndex, startDate.date + 1).toLocaleDateString('en-CA');
-            const oneDayEarlierEndDateString = new Date(endDate.year, endDate.monthIndex, endDate.date - 1).toLocaleDateString('en-CA');
+            const oneDayLaterStartDateString = new Date(startDate.year, startDate.monthIndex, startDate.day + 1).toLocaleDateString('en-CA');
+            const oneDayEarlierEndDateString = new Date(endDate.year, endDate.monthIndex, endDate.day - 1).toLocaleDateString('en-CA');
 
             if (currentDate < blockedRange.startDate) {
                 ranges.push({
@@ -156,7 +156,7 @@ function _getFreeDateRanges(startDateString: string, endDateString: string, bloc
     if (currentDate < endDateString) {
         const startDate = splitDateString(currentDate);
         if (startDate) {
-            const startDateString = new Date(startDate.year, startDate.monthIndex, startDate.date + 1).toLocaleDateString('en-CA');
+            const startDateString = new Date(startDate.year, startDate.monthIndex, startDate.day + 1).toLocaleDateString('en-CA');
             ranges.push({ startDate: startDateString, endDate: endDateString });
         }
     }
