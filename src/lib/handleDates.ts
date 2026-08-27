@@ -1,5 +1,6 @@
 import { DateRangePoint } from '../types/types';
 import { wrapNumber } from './modulo';
+import config from '../config/config.json';
 
 /*
     Example date string from OpenHoliday Api: "2025-02-25" (use Date.toLocaleDateString('en-CA'), canadian locale)
@@ -9,10 +10,10 @@ import { wrapNumber } from './modulo';
     And: --> Day = 2 (get with Date.getUTCDay() - 0-based indices starting on Sundays, the 25th was a TUESDAY)
 */
 
-export function createDateString(dateObject: Omit<DateRangePoint, 'dateString'>) {
-    const { year, monthIndex, date } = dateObject;
+export function createDateString(dateObject: Omit<DateRangePoint, 'dateString'>): string {
+    const { year, monthIndex, day } = dateObject;
     const paddedMonth = (monthIndex + 1).toString().padStart(2, '0');
-    const paddedDate = date.toString().padStart(2, '0');
+    const paddedDate = day.toString().padStart(2, '0');
 
     return `${year}-${paddedMonth}-${paddedDate}`;
 }
@@ -27,11 +28,11 @@ export function splitDateString(dateString: DateRangePoint['dateString']) {
             }
             const dateArray = dateString.split('-');
 
-            const [year, month, date] = dateArray.map((dateElem) => parseInt(dateElem));
+            const [year, month, day] = dateArray.map((dateElem) => parseInt(dateElem));
             return {
                 year,
                 monthIndex: month - 1,
-                date,
+                day,
             };
         }
     } catch (error) {
@@ -50,10 +51,10 @@ export function isInRange(date: string, rangeStart: string, rangeEnd: string) {
 }
 
 export function getFirstWeekdayIndex(rangePoint: DateRangePoint) {
-    const { date, monthIndex, year } = rangePoint;
-    const dateObj = new Date(year, monthIndex, date); // Example - for the following comments: "2025-02-25"
+    const { day, monthIndex, year } = rangePoint;
+    const dateObj = new Date(year, monthIndex, day); // Example - for the following comments: "2025-02-25"
     const weekdayIndex = dateObj.getDay();
-    const firstWeekdayIndex = wrapNumber(weekdayIndex - wrapNumber(date - 1, 7) + 7, 7);
+    const firstWeekdayIndex = wrapNumber(weekdayIndex - wrapNumber(day - 1, 7) + 7, 7);
 
     return firstWeekdayIndex;
 }
@@ -87,6 +88,21 @@ export function isISODateString(dateString: string): boolean {
     const d = new Date(dateString);
     return d instanceof Date && !isNaN(d.getTime()) && d.toISOString().startsWith(dateString); // valid date
 }
+
+export function dateNowToStoreFormat(when: 'now' | 'future'): DateRangePoint {
+    let date = new Date();
+    if (when === 'future') date = new Date(new Date(date).setMonth(date.getMonth() + Math.abs(config.monthsFromNow)));
+
+    console.log('%c[handleDates]', 'color: #8f6ae8', `date ${when} :`, date);
+    const day = date.getDate();
+    const monthIndex = date.getMonth();
+    const year = date.getFullYear();
+    const dateString = date.toISOString().split('T')[0];
+
+    return { day, monthIndex, year, dateString };
+}
+
+// Local Functions
 
 function regexTestDateString(dateString: string) {
     return /\d{4}-\d{2}-\d{2}/.test(dateString);
