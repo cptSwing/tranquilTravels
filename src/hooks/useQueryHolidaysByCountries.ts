@@ -3,7 +3,7 @@ import { QueriesResults, useQueries, UseQueryOptions } from '@tanstack/react-que
 import isDefined from '../lib/isDefined';
 import { useCallback, useMemo } from 'react';
 import config from '../config/config.json';
-import { useZustandStore } from '../lib/zustandStore';
+import { useZustandStore } from './useZustandStore';
 import { HolidayData, HolidayDataByCountry, OpenHolidaysApiError } from '../types/types';
 
 type HolidayQueryOptions = UseQueryOptions<HolidayData[], OpenHolidaysApiError, HolidayData[], unknown[]>;

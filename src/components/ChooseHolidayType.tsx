@@ -1,4 +1,4 @@
-import { useZustandStore } from '../lib/zustandStore';
+import { useZustandStore } from '../hooks/useZustandStore';
 
 const store_setHolidayType = useZustandStore.getState().methods.store_setHolidayType;
 

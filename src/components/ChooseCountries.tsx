@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import config from '../config/config.json';
 import isDefined from '../lib/isDefined';
-import { useZustandStore } from '../lib/zustandStore';
+import { useZustandStore } from '../hooks/useZustandStore';
 import DisplayError from './DisplayError';
 import DisplayLoading from './DisplayLoading';
 import ComboboxDropdown from './ComboBox';

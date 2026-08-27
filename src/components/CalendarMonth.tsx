@@ -3,7 +3,7 @@ import { isInRange } from '../lib/handleDates';
 import { MONTH_NAMES, WEEKDAY_NAMES } from '../types/consts';
 import { MonthData, DateRange, RangePosition, DayByCountries } from '../types/types';
 import CalendarDay from './CalendarDay';
-import { useZustandStore } from '../lib/zustandStore';
+import { useZustandStore } from '../hooks/useZustandStore';
 import { union } from '../lib/mapOperations';
 
 const store_setDateDetails = useZustandStore.getState().methods.store_setDateDetails;
