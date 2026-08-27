@@ -13,9 +13,10 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
             const startingFirstWeekdayOfMonth = getFirstWeekdayIndex(from);
             const endingFirstWeekdayOfMonth = getFirstWeekdayIndex(to);
 
-            const monthsDifference = wrapNumber(to.monthIndex - wrapNumber(from.monthIndex, 12) + 12, 12); // WARN bugs out at 12+ months, but should suffice
+            const monthsDifference = getMonthsDifference(from, to);
+
             const indexOfMonthBeforeRange = wrapNumber(from.monthIndex - 1, 12);
-            const yearOfMonthBeforeRange = wrapYear(from.monthIndex, from.year, indexOfMonthBeforeRange, 'backward');
+            const yearOfMonthBeforeRange = wrapYear(from.monthIndex, from.year, indexOfMonthBeforeRange);
 
             const monthsData: MonthDataTemporaryWorkingType[] = [];
 
@@ -23,7 +24,8 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
                 const previousMonthElement = monthsData[i - 1];
 
                 const monthIndexIncr = wrapNumber(from.monthIndex + i, 12);
-                const yearIncr = wrapYear(from.monthIndex, from.year, monthIndexIncr, 'forward');
+                const yearIncr = wrapYear(from.monthIndex, from.year, i);
+
                 const monthCacheKey = `${yearIncr}-${monthIndexIncr + 1}`;
 
                 // retrieve previously created month data from cache
@@ -71,7 +73,7 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
                     previousMonthLength,
                     previousMonthYear,
                     nextMonthIndex: wrapNumber(monthIndex + 1, 12),
-                    nextMonthYear: wrapYear(monthIndex, year, wrapNumber(monthIndex + 1, 12), 'forward'),
+                    nextMonthYear: wrapYear(monthIndex, year, wrapNumber(monthIndex + 1, 12)),
                     firstWeekdayIndex,
                 });
 
@@ -95,6 +97,15 @@ const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRang
 };
 
 export default useCreateCalendarMonths;
+
+// Helped by https://stackoverflow.com/a/2536445
+function getMonthsDifference(from: DateRangePoint, to: DateRangePoint): number {
+    let months = (to.year - from.year) * 12;
+    months -= from.monthIndex;
+    months += to.monthIndex;
+
+    return months <= 0 ? 0 : months;
+}
 
 function getDayCells({
     monthIndex,

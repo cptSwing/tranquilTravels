@@ -59,14 +59,10 @@ export function getFirstWeekdayIndex(rangePoint: DateRangePoint) {
     return firstWeekdayIndex;
 }
 
-export function wrapYear(currentMonthIndex: number, currentYear: number, newMonthIndex: number, direction: 'forward' | 'backward'): number {
-    if (currentMonthIndex < newMonthIndex) {
-        return direction === 'forward' ? currentYear : currentYear - 1;
-    } else if (currentMonthIndex > newMonthIndex) {
-        return direction === 'forward' ? currentYear + 1 : currentYear;
-    } else {
-        return currentYear;
-    }
+export function wrapYear(currentMonthIndex: number, currentYear: number, monthsDifference: number): number {
+    const currentDate = new Date(currentYear, currentMonthIndex);
+    currentDate.setMonth(currentMonthIndex + monthsDifference);
+    return currentDate.getFullYear();
 }
 
 /**
