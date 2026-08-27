@@ -2,14 +2,15 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { ZustandStore } from '../types/types';
 import config from '../config/config.json';
+import { dateNowToStoreFormat } from '../lib/handleDates';
 
 export const useZustandStore = create<ZustandStore>()(
     immer((set, _get) => ({
         values: {
             countries: [],
             dateRange: {
-                from: config.date.from,
-                to: config.date.to,
+                from: dateNowToStoreFormat('now'),
+                to: dateNowToStoreFormat('future'),
             },
             holidayType: { schoolHoliday: true, publicHoliday: true },
             dateDetailsActive: false,
