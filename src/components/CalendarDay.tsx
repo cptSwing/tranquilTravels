@@ -108,7 +108,22 @@ const CalendarDay = ({
                     )}
 
                     {/* Pop up date information */}
-                    <div className="duration-theme border-theme-cta-foreground absolute top-1/2 left-1/2 z-30 h-auto w-auto origin-top-left scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono text-xs leading-tight whitespace-pre capitalize opacity-10 shadow transition-[opacity,scale] peer-checked:scale-100 peer-checked:opacity-100">
+                    <div
+                        className="peer-checked:duration-theme border-theme-cta-foreground absolute top-1/2 left-1/2 z-30 h-auto w-auto max-w-dvw origin-top-left scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono text-xs leading-tight whitespace-pre capitalize opacity-0 shadow transition-[opacity,scale] duration-100 peer-checked:scale-100 peer-checked:opacity-100"
+                        onTransitionStart={(ev) => {
+                            const offsetWidth = ev.currentTarget.offsetWidth;
+                            const rectLeft = ev.currentTarget.getBoundingClientRect().left;
+                            const windowWidth = window.innerWidth;
+
+                            if (rectLeft + offsetWidth >= windowWidth) {
+                                ev.currentTarget.style.setProperty('left', `calc(50% - ${offsetWidth}px)`);
+                                ev.currentTarget.style.setProperty('transform-origin', '100% 0');
+                            } else {
+                                ev.currentTarget.style.removeProperty('left');
+                                ev.currentTarget.style.removeProperty('transform-origin');
+                            }
+                        }}
+                    >
                         {dayDescription_Memo}
                     </div>
                 </>
@@ -126,7 +141,7 @@ const CalendarDay = ({
                 )}
             />
 
-            {/* Date & circle for Pop-Up */}
+            {/* Date, as well as circle for Pop-Up */}
             <label
                 htmlFor={isInBlockedRangeSchool || isInBlockedRangePublic ? inputId : undefined}
                 className={classNames(
