@@ -2,7 +2,7 @@ import { classNames } from 'cpts-javascript-utilities';
 import { DayCellData, MapValue, RangeDays, RangePosition } from '../types/types';
 import config from '../config/config.json';
 import { useZustandStore } from '../hooks/useZustandStore';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 const store_setDateDetails = useZustandStore.getState().methods.store_setDateDetails;
 
@@ -108,31 +108,15 @@ const CalendarDay = ({
                     )}
 
                     {/* Pop up date information */}
-                    <div
-                        className="peer-checked:duration-theme border-theme-cta-foreground absolute top-1/2 left-1/2 z-30 h-auto w-auto max-w-dvw origin-top-left scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono text-xs leading-tight whitespace-pre capitalize opacity-0 shadow transition-[opacity,scale] duration-100 peer-checked:scale-100 peer-checked:opacity-100"
-                        onTransitionStart={(ev) => {
-                            const offsetWidth = ev.currentTarget.offsetWidth;
-                            const rectLeft = ev.currentTarget.getBoundingClientRect().left;
-                            const windowWidth = window.innerWidth;
-
-                            if (rectLeft + offsetWidth >= windowWidth) {
-                                ev.currentTarget.style.setProperty('left', `calc(50% - ${offsetWidth}px)`);
-                                ev.currentTarget.style.setProperty('transform-origin', '100% 0');
-                            } else {
-                                ev.currentTarget.style.removeProperty('left');
-                                ev.currentTarget.style.removeProperty('transform-origin');
-                            }
-                        }}
-                    >
-                        {dayDescription_Memo}
-                    </div>
+                    {dayDescription_Memo && <DateInformationPopup dateInformation={dayDescription_Memo} />}
                 </>
             )}
 
             {/* User-Range start- and endpoints */}
             <div
                 className={classNames(
-                    'bg-theme-cta-background after:bg-theme-accent outline-theme-accent absolute top-0.5 bottom-0.5 left-1/2 z-10 aspect-square -translate-x-1/2 rounded-full outline-5 -outline-offset-1 drop-shadow-xs after:absolute after:top-0 after:bottom-0',
+                    'bg-theme-cta-background outline-theme-accent absolute top-0.5 bottom-0.5 left-1/2 z-10 aspect-square -translate-x-1/2 rounded-full outline-5 -outline-offset-1 drop-shadow-xs',
+                    'after:bg-theme-accent after:absolute after:top-0 after:bottom-0',
                     isOnUserRangeStartOrEnd
                         ? positionInUserRange === 'first'
                             ? 'after:-right-1/2 after:left-1/2 after:[clip-path:polygon(35%_0%,75%_40%,90%_50%,75%_60%,35%_100%,60%_50%)]'
@@ -146,7 +130,6 @@ const CalendarDay = ({
                 htmlFor={isInBlockedRangeSchool || isInBlockedRangePublic ? inputId : undefined}
                 className={classNames(
                     'absolute top-0 left-0 z-20 flex size-full items-center justify-center',
-                    'peer-checked:after:bg-theme-cta-background/85 after:border-theme-cta-background after:duration-theme after:absolute after:top-1 after:bottom-1 after:mx-auto after:aspect-square after:scale-10 after:rounded-full after:border-2 after:opacity-0 after:transition-[transform,opacity] peer-checked:after:scale-100 peer-checked:after:opacity-100 peer-focus:after:opacity-100',
                     (isInBlockedRangeSchool || isInBlockedRangePublic) && 'hover:text-theme-text-light pointer-events-auto cursor-pointer',
                     monthPosition === 'currentMonth'
                         ? isOnUserRangeStartOrEnd
@@ -170,6 +153,37 @@ const CalendarDay = ({
 };
 
 export default CalendarDay;
+
+const DateInformationPopup = ({ dateInformation }: { dateInformation: string }) => {
+    const [isTooWide, setIsTooWide] = useState(false);
+
+    return (
+        <div
+            className={classNames(
+                'peer-checked:duration-theme border-theme-cta-foreground absolute top-1/2 z-30 size-auto max-w-dvw scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono text-xs leading-tight whitespace-pre capitalize opacity-0 shadow transition-[opacity,scale] duration-100 peer-checked:scale-100 peer-checked:opacity-100',
+                'peer-checked:before:bg-theme-cta-foreground before:duration-theme before:absolute before:top-[calc(-0.5*var(--calendar-grid-cell-height))] before:size-(--calendar-grid-cell-height) before:scale-10 before:rounded-full before:opacity-0 before:transition-[scale,opacity] before:[clip-path:polygon(0_0,100%_0,100%_40%,40%_40%,40%_100%,0_100%)] peer-checked:before:scale-100 peer-checked:before:opacity-40',
+                isTooWide
+                    ? 'left-[calc(50%-var(--element-offset-width))] origin-top-right before:left-[calc(-0.5*var(--calendar-grid-cell-height)+var(--element-offset-width))] before:rotate-90'
+                    : 'left-1/2 origin-top-left before:left-[calc(-0.5*var(--calendar-grid-cell-height))]',
+            )}
+            onTransitionStart={(ev) => {
+                const offsetWidth = ev.currentTarget.offsetWidth;
+                const rectLeft = ev.currentTarget.getBoundingClientRect().left;
+                const windowWidth = window.innerWidth;
+
+                if (rectLeft + offsetWidth >= windowWidth) {
+                    setIsTooWide(true);
+                    ev.currentTarget.style.setProperty('--element-offset-width', `${offsetWidth}px`);
+                } else {
+                    setIsTooWide(false);
+                    ev.currentTarget.style.removeProperty('--element-offset-width');
+                }
+            }}
+        >
+            {dateInformation}
+        </div>
+    );
+};
 
 function generateDayDescription(dateString: string, dayDescription: MapValue<RangeDays>) {
     let descriptionString = dateString + '\n';
