@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from 'preact/compat';
 import config from '../config/config.json';
 import isDefined from '../lib/isDefined';
 import { useZustandStore } from '../hooks/useZustandStore';

@@ -1,7 +1,7 @@
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { $api } from '../lib/api';
 import { CountryData, OpenHolidaysApiError } from '../types/types';
-import { useMemo } from 'react';
+import { useMemo } from 'preact/compat';
 
 type CountryQueryOptions = UseQueryOptions<CountryData[], OpenHolidaysApiError, CountryData[], unknown[]>;
 

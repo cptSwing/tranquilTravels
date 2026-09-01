@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from 'preact/compat';
 import { ComboboxItem, DateRange, HolidayDataByCountry, RangeDays } from '../types/types';
 import { splitDateString } from '../lib/handleDates';
 import isDefined from '../lib/isDefined';

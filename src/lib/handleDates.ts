@@ -28,7 +28,7 @@ export function splitDateString(dateString: DateRangePoint['dateString']) {
             }
             const dateArray = dateString.split('-');
 
-            const [year, month, day] = dateArray.map((dateElem) => parseInt(dateElem));
+            const [year, month, day] = dateArray.map((dateElem) => parseInt(dateElem, 10));
             return {
                 year,
                 monthIndex: month - 1,
@@ -77,9 +77,9 @@ export function isISODateString(dateString: string): boolean {
     if (dateString.includes('T')) {
         // this is datetime
         if (!regexTestDateTimeString(dateString)) return false;
-    } else {
+    } else if (!regexTestDateString(dateString)) {
         // this is date only
-        if (!regexTestDateString(dateString)) return false;
+        return false;
     }
     const d = new Date(dateString);
     return d instanceof Date && !isNaN(d.getTime()) && d.toISOString().startsWith(dateString); // valid date

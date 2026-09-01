@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'preact/compat';
 
 const useOutsideClick = <T extends HTMLElement>(callback: (event?: MouseEvent) => void) => {
     const ref = useRef<T>(null);

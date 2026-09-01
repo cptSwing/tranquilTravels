@@ -1,5 +1,5 @@
 import { setCssProperties } from 'cpts-javascript-utilities';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'preact/compat';
 import { wrapNumber } from '../lib/modulo';
 
 /* from https://gradient.page/ui-gradients */
@@ -72,6 +72,5 @@ function setGradientVariables(element: HTMLElement, gradientIndex: number) {
                   'var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position))',
           };
 
-    // @ts-expect-error 'function paramater type needs to be a little less strict'
     setCssProperties(element, properties);
 }

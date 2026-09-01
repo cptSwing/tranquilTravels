@@ -9,7 +9,7 @@ import jsxA11yEslint from 'eslint-plugin-jsx-a11y';
 import pluginQueryEslint from '@tanstack/eslint-plugin-query';
 import { defineConfig } from 'eslint/config';
 
-export default defineConfig(
+const config = defineConfig(
     { ignores: ['dist'] },
     {
         extends: [
@@ -35,20 +35,20 @@ export default defineConfig(
         },
         settings: {
             react: {
-                version: 'detect',
+                version: '18',
             },
         },
         rules: {
-            'react-hooks/rules-of-hooks': 'warn',
+            'react-hooks/rules-of-hooks': 'error',
             'react-hooks/exhaustive-deps': 'warn',
             'react-hooks/refs': 'off', // https://github.com/facebook/react/issues/34775
-            'react-hooks/set-state-in-effect': 'warn',
 
             'object-shorthand': 'warn',
             'no-console': 'warn',
             'no-unused-vars': 'off',
             'no-unused-expressions': 'off',
             'no-unreachable': 'warn',
+            'prefer-template': 'off',
 
             '@typescript-eslint/no-unused-vars': [
                 'warn',
@@ -67,7 +67,10 @@ export default defineConfig(
             'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
             'react/prop-types': 'off', // currently bugs out when using React.FC, see https://github.com/jsx-eslint/eslint-plugin-react/issues/3873
-            'react/display-name': ['off'], // In most cases you don't need to set the displayName as it's inferred from the function/class name.
+            'react/display-name': 'off', // In most cases you don't need to set the displayName as it's inferred from the function/class name.
+            'react/no-unknown-property': ['error', { ignore: ['onTransitionStart'] }], // https://github.com/jsx-eslint/eslint-plugin-react/issues/3993
         },
     },
 );
+
+export default config;

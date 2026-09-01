@@ -1,10 +1,11 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'preact/compat';
+import { render } from 'preact';
 import './index.css';
 import App from './App.tsx';
 
-createRoot(document.getElementById('react-root')!).render(
+render(
     <StrictMode>
         <App />
     </StrictMode>,
+    document.getElementById('preact-root')!,
 );

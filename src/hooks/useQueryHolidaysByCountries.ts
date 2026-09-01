@@ -1,7 +1,7 @@
 import { $api } from '../lib/api';
 import { QueriesResults, useQueries, UseQueryOptions } from '@tanstack/react-query';
 import isDefined from '../lib/isDefined';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'preact/compat';
 import config from '../config/config.json';
 import { useZustandStore } from './useZustandStore';
 import { HolidayData, HolidayDataByCountry, OpenHolidaysApiError } from '../types/types';

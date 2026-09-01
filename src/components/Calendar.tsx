@@ -5,7 +5,7 @@ import DisplayError from './DisplayError';
 import DisplayLoading from './DisplayLoading';
 import useQueryHolidaysByCountries from '../hooks/useQueryHolidaysByCountries';
 import CalendarMonth from './CalendarMonth';
-import { useEffect } from 'react';
+import { useEffect } from 'preact/compat';
 import debounce from '../lib/debounce';
 
 const Calendar = () => {

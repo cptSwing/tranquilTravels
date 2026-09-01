@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'preact/compat';
 import { createDateString, getDaysInMonth, getFirstWeekdayIndex, wrapYear } from '../lib/handleDates';
 import { wrapNumber } from '../lib/modulo';
 import { DateRangePoint, DayCellData, MonthData } from '../types/types';

@@ -2,7 +2,7 @@ import { classNames } from 'cpts-javascript-utilities';
 import { DayCellData, MapValue, RangeDays, RangePosition } from '../types/types';
 import config from '../config/config.json';
 import { useZustandStore } from '../hooks/useZustandStore';
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'preact/compat';
 
 const store_setDateDetails = useZustandStore.getState().methods.store_setDateDetails;
 
@@ -29,7 +29,7 @@ const CalendarDay = ({
     const isOutsideUserRangeInsideBlockedRangeSchool = !positionInUserRange && positionInBlockedRangeSchool;
     const isOutsideUserRangeInsideBlockedRangePublic = !positionInUserRange && positionInBlockedRangePublic;
 
-    const inputId = 'input-radio' + dateString + monthPosition;
+    const inputId = `input-radio_${dateString}_${monthPosition}`;
 
     const dayDescription_Memo = useMemo(() => descriptions && generateDayDescription(dateString, descriptions), [dateString, descriptions]);
 

@@ -1,7 +1,7 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Description, Field, Label } from '@headlessui/react';
 import ChevronDownIconSVG from '../assets/chevron-down-icon-solid-24.svg?react';
 import CheckIcon from '../assets/check-icon-solid-24.svg?react';
-import { useState } from 'react';
+import { useState } from 'preact/compat';
 import { ComboboxItem } from '../types/types';
 
 interface ComboboxProps {

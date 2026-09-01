@@ -13,7 +13,7 @@ const Header = () => {
                     <DeckChairSVG className="aspect-square h-full stroke-[0.75] text-neutral-300" />
 
                     <div className="flex h-full flex-col items-start justify-center gap-y-1">
-                        <h2 className="leading-none tracking-tighter text-(--html-element-gradient-via,var(--color-neutral-400)) italic text-shadow-[color:--alpha(var(--html-element-gradient-via,var(--color-neutral-400))/30%)] text-shadow-sm">
+                        <h2 className="leading-none tracking-tighter text-(--html-element-gradient-via,var(--color-neutral-400)) italic text-shadow-[--alpha(var(--html-element-gradient-via,var(--color-neutral-400))/30%)] text-shadow-sm">
                             Tranquil Travels
                         </h2>
                         <div className="ml-0.5 text-xs leading-none text-neutral-500">Find Silence Between the Seasons</div>
