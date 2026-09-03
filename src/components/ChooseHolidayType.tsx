@@ -20,7 +20,7 @@ const ChooseHolidayType = () => {
                         type="checkbox"
                         className="checked:bg-theme-cta-background"
                         checked={schoolHoliday}
-                        onChange={(ev) => store_setHolidayType({ ...holidayType, schoolHoliday: ev.target.checked })}
+                        onChange={(ev) => store_setHolidayType({ ...holidayType, schoolHoliday: ev.currentTarget.checked })}
                     />
                     <label htmlFor="select-holiday-type-school" className="text-theme-text-dark">
                         School
@@ -34,7 +34,7 @@ const ChooseHolidayType = () => {
                         type="checkbox"
                         className="checked:bg-theme-cta-background"
                         checked={publicHoliday}
-                        onChange={(ev) => store_setHolidayType({ ...holidayType, publicHoliday: ev.target.checked })}
+                        onChange={(ev) => store_setHolidayType({ ...holidayType, publicHoliday: ev.currentTarget.checked })}
                     />
                     <label htmlFor="select-holiday-type-public" className="text-theme-text-dark">
                         Public

@@ -25,9 +25,9 @@ const ChooseDateRange = () => {
                         value={from.dateString}
                         max={to.dateString} // TODO to minus one day, and max 11 months in total
                         onChange={(ev) => {
-                            const fromNumbers = splitDateString(ev.target.value);
+                            const fromNumbers = splitDateString(ev.currentTarget.value);
                             if (fromNumbers) {
-                                const from = { ...fromNumbers, dateString: ev.target.value };
+                                const from = { ...fromNumbers, dateString: ev.currentTarget.value };
                                 store_setDateRange({ from });
                             }
                         }}
@@ -45,9 +45,9 @@ const ChooseDateRange = () => {
                         value={to.dateString}
                         min={from.dateString} // TODO from plus one day, and max 11 months in total
                         onChange={(ev) => {
-                            const toNumbers = splitDateString(ev.target.value);
+                            const toNumbers = splitDateString(ev.currentTarget.value);
                             if (toNumbers) {
-                                const to = { ...toNumbers, dateString: ev.target.value };
+                                const to = { ...toNumbers, dateString: ev.currentTarget.value };
                                 store_setDateRange({ to });
                             }
                         }}

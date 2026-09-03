@@ -41,7 +41,7 @@ const ComboboxDropdown = (props: ComboboxProps) => {
                                 className="bg-theme-cta-background text-theme-text-light w-full rounded-sm px-(--input-element-padding) data-open:rounded-b-none"
                                 displayValue={() => (open ? '' : 'Select countries')}
                                 aria-label={label}
-                                onChange={(event) => setQuery(event.target.value)}
+                                onChange={(event) => setQuery(event.currentTarget.value)}
                             />
 
                             <ComboboxButton className="group absolute inset-y-0 right-0 cursor-pointer px-(--input-element-padding)">
