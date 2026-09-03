@@ -1,3 +1,4 @@
+import config from '../config/config.json';
 import { useZustandStore } from '../hooks/useZustandStore';
 import useProcessHolidayResponse from '../hooks/useProcessHolidayResponse';
 import useCreateCalendarMonths from '../hooks/useCreateCalendarMonths';
@@ -39,7 +40,7 @@ const Calendar = () => {
 export default Calendar;
 
 const store_setDateDetails = useZustandStore.getState().methods.store_setDateDetails;
-const debounceSetDateDetailsInactive = debounce(() => store_setDateDetails(false), 5000);
+const debounceSetDateDetailsInactive = debounce(() => store_setDateDetails(false), config.dateInfoPopupDisappearTime);
 
 /* Going slightly overboard with the 'checkbox-hack' but ok */
 const DeactiveDateDetails = () => {

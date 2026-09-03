@@ -2,7 +2,8 @@
     "language": "EN",
     "monthsFromNow": 3,
     "countrySelectionMax": 5,
+    "dateInfoPopupDisappearTime": 5000,
     "mergeGroupsAndSubdivisions": true,
-    "debug": false,
-    "version": "0.0.2"
+    "version": "0.0.4",
+    "debug": false
 }
