@@ -4,7 +4,7 @@ import Acknowledgements from './Acknowledgements';
 
 const Main = () => {
     return (
-        <main className="mx-auto flex w-(--content-width) flex-col items-center justify-start gap-y-4 [--main-elements-padding:--spacing(3)]">
+        <main className="mx-auto mt-[calc(var(--header-height)+--spacing(2))] flex w-(--content-width) flex-col items-center justify-start gap-y-4 [--main-elements-padding:--spacing(3)]">
             <Intro />
             <HorizontalRuler widthClass="md:w-2/3 w-full" />
 

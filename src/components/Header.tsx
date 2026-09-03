@@ -7,7 +7,7 @@ const Header = () => {
     const { nextGradient, name } = useChangeBackground();
 
     return (
-        <header className="sticky top-2 z-50 h-(--header-height) w-full border-t-(length:--header-border-width) border-b-(length:--header-border-width) border-[--alpha(var(--html-element-gradient-from)/80%)] bg-(--html-element-gradient-to) shadow outline outline-[--alpha(var(--html-element-gradient-from)/100%)] [--header-border-width:7px] before:absolute before:top-0 before:right-0 before:bottom-0 before:left-0 before:-z-10 before:border-t-(length:--header-border-width) before:border-b-(length:--header-border-width) before:border-neutral-500/40 before:bg-white/60">
+        <header className="absolute top-2 z-50 h-(--header-height) w-full border-t-(length:--header-border-width) border-b-(length:--header-border-width) border-[--alpha(var(--html-element-gradient-from)/80%)] bg-(--html-element-gradient-to) shadow outline outline-[--alpha(var(--html-element-gradient-from)/100%)] [--header-border-width:7px] before:absolute before:top-0 before:right-0 before:bottom-0 before:left-0 before:-z-10 before:border-t-(length:--header-border-width) before:border-b-(length:--header-border-width) before:border-neutral-500/40 before:bg-white/60">
             <div className="mx-auto flex h-[calc(var(--header-height)-(2*var(--header-border-width)))] w-(--content-width) items-center justify-between py-1 mix-blend-difference contrast-150">
                 <div className="flex h-[calc(var(--header-height)-(4*var(--header-border-width)))] items-center gap-x-2 py-1 select-none">
                     <DeckChairSVG className="aspect-square h-full stroke-[0.75] text-neutral-300" />
