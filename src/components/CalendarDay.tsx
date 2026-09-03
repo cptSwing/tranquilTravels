@@ -130,6 +130,7 @@ const CalendarDay = ({
                 htmlFor={isInBlockedRangeSchool || isInBlockedRangePublic ? inputId : undefined}
                 className={classNames(
                     'absolute top-0 left-0 z-20 flex size-full items-center justify-center',
+                    'peer-checked:text-theme-cta-foreground peer-checked:z-50',
                     (isInBlockedRangeSchool || isInBlockedRangePublic) && 'hover:text-theme-text-light pointer-events-auto cursor-pointer',
                     monthPosition === 'currentMonth'
                         ? isOnUserRangeStartOrEnd
@@ -160,8 +161,8 @@ const DateInformationPopup = ({ dateInformation }: { dateInformation: string }) 
     return (
         <div
             className={classNames(
-                'peer-checked:duration-theme border-theme-cta-foreground absolute top-1/2 z-30 size-auto max-w-dvw scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono text-xs leading-tight whitespace-pre capitalize opacity-0 shadow transition-[opacity,scale] duration-100 peer-checked:scale-100 peer-checked:opacity-100',
-                'peer-checked:before:bg-theme-cta-foreground before:duration-theme before:absolute before:top-[calc(-0.5*var(--calendar-grid-cell-height))] before:size-(--calendar-grid-cell-height) before:scale-10 before:rounded-full before:opacity-0 before:transition-[scale,opacity] before:[clip-path:polygon(0_0,100%_0,100%_40%,40%_40%,40%_100%,0_100%)] peer-checked:before:scale-100 peer-checked:before:opacity-40',
+                'peer-checked:duration-theme border-theme-accent absolute top-1/2 z-30 size-auto max-w-dvw scale-x-0 scale-y-50 rounded-xs border bg-white p-1 pb-0.5 text-left font-mono text-xs leading-tight whitespace-pre capitalize opacity-0 shadow transition-[opacity,scale] duration-100 peer-checked:scale-100 peer-checked:opacity-100',
+                'peer-checked:before:bg-theme-accent before:duration-theme before:absolute before:top-[calc(-0.5*var(--calendar-grid-cell-height))] before:size-(--calendar-grid-cell-height) before:scale-10 before:rounded-full before:opacity-0 before:transition-[scale,opacity] before:[clip-path:polygon(0_0,100%_0,100%_51%,51%_51%,51%_100%,0_100%)] peer-checked:before:scale-90 peer-checked:before:opacity-60',
                 isTooWide
                     ? 'left-[calc(50%-var(--element-offset-width))] origin-top-right before:left-[calc(-0.5*var(--calendar-grid-cell-height)+var(--element-offset-width))] before:rotate-90'
                     : 'left-1/2 origin-top-left before:left-[calc(-0.5*var(--calendar-grid-cell-height))]',
