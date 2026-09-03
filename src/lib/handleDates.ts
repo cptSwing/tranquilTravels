@@ -42,8 +42,8 @@ export function splitDateString(dateString: DateRangePoint['dateString']) {
 }
 
 /* https://stackoverflow.com/a/315767 - skips to next month and by picking date 0, wraps back to last date of previous month */
-export function getDaysInMonth(month: number, year: number) {
-    return new Date(year, month + 1, 0).getDate();
+export function getDaysInMonth(monthIndex: number, year: number) {
+    return new Date(year, monthIndex + 1, 0).getDate();
 }
 
 export function isInRange(date: string, rangeStart: string, rangeEnd: string) {

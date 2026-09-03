@@ -4,11 +4,12 @@ import isDefined from '../lib/isDefined';
 import { useCallback, useMemo } from 'preact/compat';
 import config from '../config/config.json';
 import { useZustandStore } from './useZustandStore';
-import { HolidayData, HolidayDataByCountry, OpenHolidaysApiError } from '../types/types';
+import { DateRangePoint, HolidayData, HolidayDataByCountry, OpenHolidaysApiError } from '../types/types';
+import { createDateString, getDaysInMonth } from '../lib/handleDates';
 
 type HolidayQueryOptions = UseQueryOptions<HolidayData[], OpenHolidaysApiError, HolidayData[], unknown[]>;
 
-const useQueryHolidaysByCountries = (from: string, to: string) => {
+const useQueryHolidaysByCountries = (from: DateRangePoint, to: DateRangePoint) => {
     const selectedHolidayTypes = useZustandStore((s) => s.values.holidayType);
     const selectedCountries = useZustandStore((s) => s.values.countries);
 
@@ -27,8 +28,8 @@ const useQueryHolidaysByCountries = (from: string, to: string) => {
                         params: {
                             query: {
                                 countryIsoCode: countryItem.value,
-                                validFrom: from, // TODO should be from beginning of month (or rather, beginning of calenderview)
-                                validTo: to, // TODO should be to end of month (or rather, end of calenderview)
+                                validFrom: dateStringFirstDayOfMonth(from), // TODO should be from beginning of month (or rather, beginning of calenderview)
+                                validTo: dateStringLastDayOfMonth(to),
                                 languageIsoCode: config.language,
                             },
                         },
@@ -67,3 +68,14 @@ const useQueryHolidaysByCountries = (from: string, to: string) => {
 };
 
 export default useQueryHolidaysByCountries;
+
+function dateStringLastDayOfMonth(dateRangePoint: DateRangePoint): string {
+    const lastDay = getDaysInMonth(dateRangePoint.monthIndex, dateRangePoint.year);
+    const dateStringLastDay = createDateString({ day: lastDay, monthIndex: dateRangePoint.monthIndex, year: dateRangePoint.year });
+    return dateStringLastDay;
+}
+
+function dateStringFirstDayOfMonth(dateRangePoint: DateRangePoint): string {
+    const dateStringFirstDay = createDateString({ day: 1, monthIndex: dateRangePoint.monthIndex, year: dateRangePoint.year });
+    return dateStringFirstDay;
+}

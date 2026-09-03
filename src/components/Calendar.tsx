@@ -11,7 +11,7 @@ import debounce from '../lib/debounce';
 const Calendar = () => {
     const { from, to } = useZustandStore((store) => store.values.dateRange);
 
-    const { data, isPending, errors } = useQueryHolidaysByCountries(from.dateString, to.dateString);
+    const { data, isPending, errors } = useQueryHolidaysByCountries(from, to);
     const { blockedRangesSchool, blockedRangesPublic } = useProcessHolidayResponse(data) ?? {};
     const monthsData = useCreateCalendarMonths({ from, to });
 
