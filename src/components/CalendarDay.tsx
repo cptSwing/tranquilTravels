@@ -50,7 +50,7 @@ const CalendarDay = ({
                         id={inputId}
                         type="radio"
                         tabIndex={0}
-                        name="calender-days-input-radio-name"
+                        name={config.dateInfoPopupRadioCheckboxName}
                         className="peer absolute size-full [clip-path:rect(0_0_0_0)]" // retain selectability / accessability
                         onChange={(ev) => ev.currentTarget.checked && store_setDateDetails(true)}
                     />

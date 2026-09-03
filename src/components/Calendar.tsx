@@ -1,3 +1,4 @@
+import config from '../config/config.json';
 import { useZustandStore } from '../hooks/useZustandStore';
 import useProcessHolidayResponse from '../hooks/useProcessHolidayResponse';
 import useCreateCalendarMonths from '../hooks/useCreateCalendarMonths';
@@ -39,9 +40,9 @@ const Calendar = () => {
 export default Calendar;
 
 const store_setDateDetails = useZustandStore.getState().methods.store_setDateDetails;
-const debounceSetDateDetailsInactive = debounce(() => store_setDateDetails(false), 5000);
+const debounceSetDateDetailsInactive = debounce(() => store_setDateDetails(false), config.dateInfoPopupDisappearTime);
 
-/* Going slightly overboard with the 'checkbox-hack' but ok */
+/* Going slightly overboard with the 'checkbox-hack' but ok (this 'overwrites' any other input with name "calender-days-input-radio-name" since only one radio can be toggled active) */
 const DeactiveDateDetails = () => {
     const dateDetailsActive = useZustandStore((s) => s.values.dateDetailsActive);
 
@@ -54,7 +55,7 @@ const DeactiveDateDetails = () => {
     return (
         <input
             type="radio"
-            name="calender-days-input-radio-name"
+            name={config.dateInfoPopupRadioCheckboxName}
             id="calendar-days-input-radio-none-selected"
             className="hidden"
             checked={!dateDetailsActive}
