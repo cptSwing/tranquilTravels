@@ -4,17 +4,27 @@ import isDefined from '../lib/isDefined';
 import { useCallback, useMemo } from 'preact/compat';
 import config from '../config/config.json';
 import { useZustandStore } from './useZustandStore';
-import { DateRangePoint, HolidayData, HolidayDataByCountry, OpenHolidaysApiError } from '../types/types';
-import { createDateString, getDaysInMonth } from '../lib/handleDates';
+import { HolidayData, HolidayDataByCountry, MonthData, OpenHolidaysApiError } from '../types/types';
 
 type HolidayQueryOptions = UseQueryOptions<HolidayData[], OpenHolidaysApiError, HolidayData[], unknown[]>;
 
-const useQueryHolidaysByCountries = (from: DateRangePoint, to: DateRangePoint) => {
+const useQueryHolidaysByCountries = (monthsData: MonthData[]) => {
     const selectedHolidayTypes = useZustandStore((s) => s.values.holidayType);
     const selectedCountries = useZustandStore((s) => s.values.countries);
 
     const { queryOptions, metaDatas } = useMemo(() => {
         const metaDatas: HolidayDataByCountry['metaData'][] = [];
+
+        if (!monthsData.length) {
+            return {
+                queryOptions: [],
+                metaDatas,
+            };
+        }
+
+        const firstDayCellInFirstMonth = monthsData[0].cells[0].dateString;
+        const lastMonthInData = monthsData[monthsData.length - 1];
+        const lastDayCellInLastMonth = lastMonthInData.cells[lastMonthInData.cells.length - 1].dateString;
 
         const queryOptions = Object.entries(selectedHolidayTypes)
             .filter(([_, isSelected]) => isSelected)
@@ -24,12 +34,13 @@ const useQueryHolidaysByCountries = (from: DateRangePoint, to: DateRangePoint) =
                         countryItem,
                         holidayType: holidayType as 'schoolHoliday' | 'publicHoliday',
                     });
+
                     return $api.queryOptions('get', holidayType === 'schoolHoliday' ? '/SchoolHolidays' : '/PublicHolidays', {
                         params: {
                             query: {
                                 countryIsoCode: countryItem.value,
-                                validFrom: dateStringFirstDayOfMonth(from), // TODO should be from beginning of month (or rather, beginning of calenderview)
-                                validTo: dateStringLastDayOfMonth(to),
+                                validFrom: firstDayCellInFirstMonth,
+                                validTo: lastDayCellInLastMonth,
                                 languageIsoCode: config.language,
                             },
                         },
@@ -39,7 +50,7 @@ const useQueryHolidaysByCountries = (from: DateRangePoint, to: DateRangePoint) =
             .filter(isDefined);
 
         return { queryOptions, metaDatas };
-    }, [from, selectedCountries, selectedHolidayTypes, to]);
+    }, [monthsData, selectedCountries, selectedHolidayTypes]);
 
     const combineResults_Cb = useCallback(
         (results: QueriesResults<HolidayQueryOptions[]>) => ({
@@ -68,14 +79,3 @@ const useQueryHolidaysByCountries = (from: DateRangePoint, to: DateRangePoint) =
 };
 
 export default useQueryHolidaysByCountries;
-
-function dateStringLastDayOfMonth(dateRangePoint: DateRangePoint): string {
-    const lastDay = getDaysInMonth(dateRangePoint.monthIndex, dateRangePoint.year);
-    const dateStringLastDay = createDateString({ day: lastDay, monthIndex: dateRangePoint.monthIndex, year: dateRangePoint.year });
-    return dateStringLastDay;
-}
-
-function dateStringFirstDayOfMonth(dateRangePoint: DateRangePoint): string {
-    const dateStringFirstDay = createDateString({ day: 1, monthIndex: dateRangePoint.monthIndex, year: dateRangePoint.year });
-    return dateStringFirstDay;
-}

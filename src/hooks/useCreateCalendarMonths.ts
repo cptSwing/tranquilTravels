@@ -3,95 +3,94 @@ import { createDateString, getDaysInMonth, getFirstWeekdayIndex, wrapYear } from
 import { wrapNumber } from '../lib/modulo';
 import { DateRangePoint, DayCellData, MonthData } from '../types/types';
 
-const useCreateCalendarMonths = (dateRange: { from: DateRangePoint; to: DateRangePoint }) => {
+const useCreateCalendarMonths = (from: DateRangePoint, to: DateRangePoint) => {
     const monthCacheRef = useRef<Map<string, MonthDataTemporaryWorkingType>>(new Map());
 
     const monthsData_Memo: MonthData[] | undefined = useMemo(() => {
-        if (dateRange) {
-            const { from, to } = dateRange;
+        const startingFirstWeekdayOfMonth = getFirstWeekdayIndex(from);
+        const endingFirstWeekdayOfMonth = getFirstWeekdayIndex(to);
 
-            const startingFirstWeekdayOfMonth = getFirstWeekdayIndex(from);
-            const endingFirstWeekdayOfMonth = getFirstWeekdayIndex(to);
+        const monthsDifference = getMonthsDifference(from, to);
 
-            const monthsDifference = getMonthsDifference(from, to);
+        const indexOfMonthBeforeRange = wrapNumber(from.monthIndex - 1, 12);
+        const yearOfMonthBeforeRange = wrapYear(from.monthIndex, from.year, -1);
 
-            const indexOfMonthBeforeRange = wrapNumber(from.monthIndex - 1, 12);
-            const yearOfMonthBeforeRange = wrapYear(from.monthIndex, from.year, indexOfMonthBeforeRange);
+        const monthsData: MonthDataTemporaryWorkingType[] = [];
 
-            const monthsData: MonthDataTemporaryWorkingType[] = [];
+        for (let i = 0; i <= monthsDifference; i++) {
+            const previousMonthElement = monthsData[i - 1];
 
-            for (let i = 0; i < monthsDifference + 1; i++) {
-                const previousMonthElement = monthsData[i - 1];
+            const monthIndexIncr = wrapNumber(from.monthIndex + i, 12);
+            const yearIncr = wrapYear(from.monthIndex, from.year, i);
 
-                const monthIndexIncr = wrapNumber(from.monthIndex + i, 12);
-                const yearIncr = wrapYear(from.monthIndex, from.year, i);
+            const monthCacheKey = `${yearIncr}-${monthIndexIncr + 1}`;
 
-                const monthCacheKey = `${yearIncr}-${monthIndexIncr + 1}`;
-
-                // retrieve previously created month data from cache
-                if (monthCacheRef.current.has(monthCacheKey)) {
-                    monthsData.push(monthCacheRef.current.get(monthCacheKey)!);
-                    continue;
-                }
-
-                const monthLength = getDaysInMonth(monthIndexIncr, yearIncr);
-
-                let monthIndex, year, firstWeekdayIndex, previousMonthIndex, previousMonthLength, previousMonthYear;
-
-                if (i === 0) {
-                    // first Month
-                    monthIndex = from.monthIndex;
-                    year = from.year;
-                    firstWeekdayIndex = startingFirstWeekdayOfMonth;
-                    previousMonthIndex = indexOfMonthBeforeRange;
-                    previousMonthLength = getDaysInMonth(indexOfMonthBeforeRange, yearOfMonthBeforeRange);
-                    previousMonthYear = yearOfMonthBeforeRange;
-                } else if (i === monthsDifference) {
-                    // last Month
-                    monthIndex = to.monthIndex;
-                    year = to.year;
-                    firstWeekdayIndex = endingFirstWeekdayOfMonth;
-                    previousMonthIndex = previousMonthElement.monthIndex;
-                    previousMonthLength = previousMonthElement.monthLength;
-                    previousMonthYear = previousMonthElement.year;
-                } else {
-                    // in-between
-                    monthIndex = monthIndexIncr;
-                    year = yearIncr;
-                    firstWeekdayIndex = wrapNumber(previousMonthElement.firstWeekdayIndex + previousMonthElement.monthLength, 7); // avoid further Date() object creation
-                    previousMonthIndex = previousMonthElement.monthIndex;
-                    previousMonthLength = previousMonthElement.monthLength;
-                    previousMonthYear = previousMonthElement.year;
-                }
-
-                // create grid cells for month display ('30, 31, 1, 2, ..., 31, 1, 2, 3)
-                const cells = getDayCells({
-                    monthIndex,
-                    monthLength,
-                    year,
-                    previousMonthIndex,
-                    previousMonthLength,
-                    previousMonthYear,
-                    nextMonthIndex: wrapNumber(monthIndex + 1, 12),
-                    nextMonthYear: wrapYear(monthIndex, year, wrapNumber(monthIndex + 1, 12)),
-                    firstWeekdayIndex,
-                });
-
-                const monthData: MonthDataTemporaryWorkingType = {
-                    firstWeekdayIndex,
-                    monthIndex,
-                    monthLength,
-                    year,
-                    cells,
-                };
-
-                monthsData.push(monthData);
-                monthCacheRef.current.set(monthCacheKey, monthData);
+            // retrieve previously created month data from cache
+            if (monthCacheRef.current.has(monthCacheKey)) {
+                monthsData.push(monthCacheRef.current.get(monthCacheKey)!);
+                continue;
             }
 
-            return monthsData.map(({ year, monthIndex, cells }) => ({ year, monthIndex, cells })) as MonthData[];
+            const monthLength = getDaysInMonth(monthIndexIncr, yearIncr);
+
+            let monthIndex, year, firstWeekdayIndex, previousMonthIndex, previousMonthLength, previousMonthYear;
+
+            if (i === 0) {
+                // first Month
+                monthIndex = from.monthIndex;
+                year = from.year;
+                firstWeekdayIndex = startingFirstWeekdayOfMonth;
+                previousMonthIndex = indexOfMonthBeforeRange;
+                previousMonthLength = getDaysInMonth(indexOfMonthBeforeRange, yearOfMonthBeforeRange);
+                previousMonthYear = yearOfMonthBeforeRange;
+            } else if (i === monthsDifference) {
+                // last Month
+                monthIndex = to.monthIndex;
+                year = to.year;
+                firstWeekdayIndex = endingFirstWeekdayOfMonth;
+                previousMonthIndex = previousMonthElement.monthIndex;
+                previousMonthLength = previousMonthElement.monthLength;
+                previousMonthYear = previousMonthElement.year;
+            } else {
+                // in-between
+                monthIndex = monthIndexIncr;
+                year = yearIncr;
+                firstWeekdayIndex = wrapNumber(previousMonthElement.firstWeekdayIndex + previousMonthElement.monthLength, 7); // avoid further Date() object creation
+                previousMonthIndex = previousMonthElement.monthIndex;
+                previousMonthLength = previousMonthElement.monthLength;
+                previousMonthYear = previousMonthElement.year;
+            }
+
+            const nextMonthIndex = wrapNumber(monthIndex + 1, 12);
+            const nextMonthYear = wrapYear(monthIndex, year, 1);
+
+            // create grid cells for month display ('30, 31, 1, 2, ..., 31, 1, 2, 3)
+            const cells = getDayCells({
+                monthIndex,
+                monthLength,
+                year,
+                previousMonthIndex,
+                previousMonthLength,
+                previousMonthYear,
+                nextMonthIndex,
+                nextMonthYear,
+                firstWeekdayIndex,
+            });
+
+            const monthData: MonthDataTemporaryWorkingType = {
+                firstWeekdayIndex,
+                monthIndex,
+                monthLength,
+                year,
+                cells,
+            };
+
+            monthsData.push(monthData);
+            monthCacheRef.current.set(monthCacheKey, monthData);
         }
-    }, [dateRange]);
+
+        return monthsData.map(({ year, monthIndex, cells }) => ({ year, monthIndex, cells })) as MonthData[];
+    }, [from, to]);
 
     return monthsData_Memo;
 };

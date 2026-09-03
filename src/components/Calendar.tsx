@@ -12,19 +12,18 @@ import debounce from '../lib/debounce';
 const Calendar = () => {
     const { from, to } = useZustandStore((store) => store.values.dateRange);
 
-    const { data, isPending, errors } = useQueryHolidaysByCountries(from, to);
+    const monthsData = useCreateCalendarMonths(from, to);
+    const { data, isPending, errors } = useQueryHolidaysByCountries(monthsData);
     const { blockedRangesSchool, blockedRangesPublic } = useProcessHolidayResponse(data) ?? {};
-    const monthsData = useCreateCalendarMonths({ from, to });
 
     if (errors.length) return <DisplayError error={errors} />;
     if (isPending) return <DisplayLoading />;
-    if (!monthsData) return;
 
     return (
         <div className="level-1 pointer-events-none z-0 grid w-full grid-cols-1 gap-4 p-(--main-elements-padding) [--calendar-grid-cell-height:--spacing(9)] [--calendar-grid-cell-width:--spacing(auto)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <DeactiveDateDetails />
 
-            {monthsData?.map((monthData, idx) => (
+            {monthsData.map((monthData, idx) => (
                 <CalendarMonth
                     key={from.dateString + to.dateString + idx}
                     monthData={monthData}
