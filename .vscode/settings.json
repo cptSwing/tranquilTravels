@@ -1,0 +1,13 @@
+{
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
+    "js/ts.tsserver.experimental.enableProjectDiagnostics": true,
+    "eslint.lintTask.command": "yarn lint-fix",
+    "eslint.lintTask.enable": true,
+    "triggerTaskOnSave.tasks": {
+        "eslint: lint-fix": ["src/"]
+    },
+    "triggerTaskOnSave.showNotifications": true,
+    // "triggerTaskOnSave.resultIndicator": "statusBar.background",
+    "triggerTaskOnSave.failureColour": "#ff0000",
+    "triggerTaskOnSave.successColour": "#00ff00"
+}
