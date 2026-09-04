@@ -20,7 +20,6 @@ const config = defineConfig(
             reactRefreshEslint.configs.recommended,
             reactHooksEslint.configs.flat.recommended,
             jsxA11yEslint.flatConfigs.recommended,
-            ...tsEslint.configs.recommended,
             prettierEslintRecommended,
         ],
         files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
@@ -50,6 +49,24 @@ const config = defineConfig(
             'no-unreachable': 'warn',
             'prefer-template': 'off',
 
+            'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+
+            'react/prop-types': 'off', // currently bugs out when using React.FC, see https://github.com/jsx-eslint/eslint-plugin-react/issues/3873
+            'react/display-name': 'off', // In most cases you don't need to set the displayName as it's inferred from the function/class name.
+            'react/no-unknown-property': ['error', { ignore: ['onTransitionStart'] }], // https://github.com/jsx-eslint/eslint-plugin-react/issues/3993
+        },
+    },
+
+    {
+        files: ['**/*.{ts,tsx}'],
+        extends: [...tsEslint.configs.recommendedTypeChecked],
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+        rules: {
             '@typescript-eslint/no-unused-vars': [
                 'warn',
                 {
@@ -63,12 +80,6 @@ const config = defineConfig(
                 },
             ],
             '@typescript-eslint/no-unused-expressions': ['error', { allowTernary: true, allowShortCircuit: true }],
-
-            'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-
-            'react/prop-types': 'off', // currently bugs out when using React.FC, see https://github.com/jsx-eslint/eslint-plugin-react/issues/3873
-            'react/display-name': 'off', // In most cases you don't need to set the displayName as it's inferred from the function/class name.
-            'react/no-unknown-property': ['error', { ignore: ['onTransitionStart'] }], // https://github.com/jsx-eslint/eslint-plugin-react/issues/3993
         },
     },
 );
