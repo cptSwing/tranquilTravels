@@ -19,7 +19,7 @@ const CalendarMonth = ({
     blockedRangesSchool?: DateRange[];
     blockedRangesPublic?: DateRange[];
 }) => {
-    const { monthIndex, year, cells } = monthData;
+    const { monthIndex, year, dayCells } = monthData;
     const outsideClick_Ref = useOutsideClick<HTMLDivElement>(() => store_setDateDetails(false));
 
     return (
@@ -32,7 +32,7 @@ const CalendarMonth = ({
                 <WeekdayNames />
 
                 <div ref={outsideClick_Ref} className="contents">
-                    {cells.map((cell) => {
+                    {dayCells.map((cell) => {
                         const positionInUserRange = getPositionInRange(cell.dateString, userRange.startDate, userRange.endDate);
 
                         const blockedRangeSchool = blockedRangesSchool?.find((r) => isInRange(cell.dateString, r.startDate, r.endDate));
@@ -95,5 +95,5 @@ function mergeDayDescriptions([dayDescription1, dayDescription2]: [DayByCountrie
     if (!dayDescription1 || !dayDescription2) return undefined;
     const unioned = union(dayDescription1, dayDescription2);
 
-    return unioned as DayByCountries;
+    return unioned;
 }

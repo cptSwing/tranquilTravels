@@ -31,9 +31,7 @@ export type DateRangePoint = {
 };
 
 export type MonthData = Pick<DateRangePoint, 'year' | 'monthIndex'> & {
-    year: number;
-    monthIndex: number;
-    cells: DayCellData[];
+    dayCells: DayCellData[];
 };
 
 export type DayCellData = { day: number; monthPosition: 'previousMonth' | 'currentMonth' | 'nextMonth'; dateString: string };

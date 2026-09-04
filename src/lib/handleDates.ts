@@ -21,7 +21,7 @@ export function createDateString(dateObject: Omit<DateRangePoint, 'dateString'>)
 export function splitDateString(dateString: DateRangePoint['dateString']) {
     try {
         if (typeof dateString !== 'string') {
-            throw new Error(`dateString (${dateString}) is not of type "string"!`);
+            throw new Error('dateString is not of type "string"!', dateString);
         } else {
             if (!regexTestDateString(dateString)) {
                 throw new Error(`invalid date string! ${dateString} - format should be "2025-12-24"`);

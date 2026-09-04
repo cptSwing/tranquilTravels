@@ -64,8 +64,8 @@ const useCreateCalendarMonths = (from: DateRangePoint, to: DateRangePoint) => {
             const nextMonthIndex = wrapNumber(monthIndex + 1, 12);
             const nextMonthYear = wrapYear(monthIndex, year, 1);
 
-            // create grid cells for month display ('30, 31, 1, 2, ..., 31, 1, 2, 3)
-            const cells = getDayCells({
+            // create grid dayCells for month display ('30, 31, 1, 2, ..., 31, 1, 2, 3)
+            const dayCells = getDayCells({
                 monthIndex,
                 monthLength,
                 year,
@@ -82,14 +82,14 @@ const useCreateCalendarMonths = (from: DateRangePoint, to: DateRangePoint) => {
                 monthIndex,
                 monthLength,
                 year,
-                cells,
+                dayCells,
             };
 
             monthsData.push(monthData);
             monthCacheRef.current.set(monthCacheKey, monthData);
         }
 
-        return monthsData.map(({ year, monthIndex, cells }) => ({ year, monthIndex, cells })) as MonthData[];
+        return monthsData.map(({ year, monthIndex, dayCells }) => ({ year, monthIndex, dayCells }));
     }, [from, to]);
 
     return monthsData_Memo;
@@ -133,7 +133,7 @@ function getDayCells({
     const cellsAfterMonth = (7 - (cellsBeforeMonthPlusCellsMonths % 7)) % 7;
     const totalCells = cellsBeforeMonthPlusCellsMonths + cellsAfterMonth;
 
-    const cells = Array.from({ length: totalCells }).map((_, idx) => {
+    const dayCells = Array.from({ length: totalCells }).map((_, idx) => {
         const monthPosition: DayCellData['monthPosition'] =
             idx < cellsBeforeMonth ? 'previousMonth' : idx >= cellsBeforeMonthPlusCellsMonths ? 'nextMonth' : 'currentMonth';
 
@@ -163,7 +163,7 @@ function getDayCells({
         };
     });
 
-    return cells;
+    return dayCells;
 }
 
 type MonthDataTemporaryWorkingType = MonthData & {

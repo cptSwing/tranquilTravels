@@ -59,12 +59,8 @@ const useProcessHolidayResponse = (holidaysResponse: HolidayDataByCountry[][]) =
             }
 
             return {
-                blockedRangesSchool: mergedSchoolRanges.map(
-                    ({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions }) as DateRange,
-                ),
-                blockedRangesPublic: mergedPublicRanges.map(
-                    ({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions }) as DateRange,
-                ),
+                blockedRangesSchool: mergedSchoolRanges.map(({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions })),
+                blockedRangesPublic: mergedPublicRanges.map(({ startDate, endDate, dailyDescriptions }) => ({ startDate, endDate, dailyDescriptions })),
             };
         }
     }, [holidaysResponse]);
@@ -114,7 +110,7 @@ function getDailyDescriptionData(
         } else {
             singleDayMap.set(
                 countryIsoCode,
-                new Map().set(holidayName, {
+                new Map<string, { groups: Set<string>; subdivisions: Set<string> }>().set(holidayName, {
                     groups: groupName ? new Set([groupName]) : new Set(),
                     subdivisions: subdivisionName ? new Set([subdivisionName]) : new Set(),
                 }),
