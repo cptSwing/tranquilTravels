@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* which of the following is a better 1:1 match between desktop and mobile? */
+@custom-variant hocus (&:hover, &:focus);
+@custom-variant hoctive (&:hover, &:active);
+
 @theme {
     --text-2xs: 0.625rem;
     --text-2xs--line-height: 0.875rem;
@@ -29,77 +33,81 @@
     --inset-shadow-nondirectional-sm: inset 0px 0px 2px 0px var(--tw-inset-shadow-color, rgb(0 0 0 / 0.05));
 }
 
-html {
-    @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-tr from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-base transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90dvw] [--header-height:--spacing(22)] md:[--content-width:80dvw] xl:[--content-width:70dvw];
+@layer base {
+    body {
+        scrollbar-gutter: stable both-edges;
+    }
 
-    /* Fix headlessui bug: https://github.com/tailwindlabs/headlessui/issues/762  */
-    @apply pr-0!;
-    /* overflow-y-auto! */
+    html {
+        @apply duration-theme h-dvh w-dvw overflow-x-hidden bg-linear-to-tr from-(--html-element-gradient-from) to-(--html-element-gradient-to) bg-fixed text-base transition-[--tw-gradient-from,--tw-gradient-via,--tw-gradient-to] [--content-width:90dvw] [--header-height:--spacing(22)] md:[--content-width:80dvw] xl:[--content-width:70dvw];
+
+        /* Fix headlessui bug: https://github.com/tailwindlabs/headlessui/issues/762  */
+        @apply pr-0!;
+        /* overflow-y-auto! */
+    }
+
+    a {
+        @apply text-emerald-800 underline-offset-2 visited:text-emerald-950 hover:text-emerald-600 hover:underline;
+    }
+
+    h1 {
+        @apply text-4xl;
+    }
+
+    h2 {
+        @apply text-3xl;
+    }
+
+    h3 {
+        @apply text-2xl;
+    }
+
+    h4 {
+        @apply text-xl;
+    }
+
+    h5 {
+        @apply text-lg;
+    }
+
+    h6 {
+        @apply text-base;
+    }
+
+    label {
+        @apply text-xs;
+    }
+
+    header a {
+        @apply hover:text-theme-cta-background text-neutral-100 visited:text-neutral-100;
+    }
+
+    #root {
+        display: contents;
+    }
+
+    /* Calender icon coloring in firefox */
+    input[type='date'] {
+        @apply accent-theme-cta-foreground cursor-pointer;
+    }
+
+    /* Calender icon coloring in chrome, using https://codepen.io/sosuke/pen/Pjoqqp */
+    input[type='date']::-webkit-calendar-picker-indicator {
+        @apply text-lg;
+        filter: invert(14%) sepia(61%) saturate(6015%) hue-rotate(337deg) brightness(82%) contrast(94%);
+    }
 }
 
-body {
-    scrollbar-gutter: stable both-edges;
-}
+@layer components {
+    .level-1 {
+        @apply bg-theme-background-level-1 border-theme-background-level-2/50 rounded-sm border shadow-sm;
+    }
 
-a {
-    @apply text-emerald-800 underline-offset-2 visited:text-emerald-950 hover:text-emerald-600 hover:underline;
-}
+    .level-2 {
+        @apply bg-theme-background-level-2 border-theme-background-level-3/50 rounded-md border shadow-md;
+    }
 
-header a {
-    @apply hover:text-theme-cta-background text-neutral-100 visited:text-neutral-100;
-}
-
-h1 {
-    @apply text-4xl;
-}
-
-h2 {
-    @apply text-3xl;
-}
-
-h3 {
-    @apply text-2xl;
-}
-
-h4 {
-    @apply text-xl;
-}
-
-h5 {
-    @apply text-lg;
-}
-
-h6 {
-    @apply text-base;
-}
-
-label {
-    @apply text-xs;
-}
-
-#root {
-    display: contents;
-}
-
-/* Calender icon coloring in firefox */
-input[type='date'] {
-    @apply accent-theme-cta-foreground cursor-pointer;
-}
-
-/* Calender icon coloring in chrome, using https://codepen.io/sosuke/pen/Pjoqqp */
-input[type='date']::-webkit-calendar-picker-indicator {
-    @apply text-lg;
-    filter: invert(14%) sepia(61%) saturate(6015%) hue-rotate(337deg) brightness(82%) contrast(94%);
-}
-
-.level-1 {
-    @apply bg-theme-background-level-1 border-theme-background-level-2/50 rounded-sm border shadow-sm;
-}
-
-.level-2 {
-    @apply bg-theme-background-level-2 border-theme-background-level-3/50 rounded-md border shadow-md;
-}
-
-.level-3 {
-    @apply bg-theme-background-level-3 border-theme-background-level-1/50 rounded-lg border shadow-lg;
+    .level-3 {
+        @apply bg-theme-background-level-3 border-theme-background-level-1/50 rounded-lg border shadow-lg;
+    }
 }
